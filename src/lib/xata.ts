@@ -6,18 +6,25 @@ import type {
   XataRecord,
 } from "@xata.io/client";
 
-const tables = [] as const;
+const tables = [
+  { name: "Images", columns: [{ name: "file", type: "file" }] },
+] as const;
 
 export type SchemaTables = typeof tables;
 export type InferredTypes = SchemaInference<SchemaTables>;
 
-export type DatabaseSchema = {};
+export type Images = InferredTypes["Images"];
+export type ImagesRecord = Images & XataRecord;
+
+export type DatabaseSchema = {
+  Images: ImagesRecord;
+};
 
 const DatabaseClient = buildClient();
 
 const defaultOptions = {
   databaseURL:
-    "https://Sebastian-s-workspace-u593rk.us-east-1.xata.sh/db/PhotograftAI",
+    "https://Sebastian-s-workspace-u593rk.eu-central-1.xata.sh/db/PhotograftAI",
 };
 
 export class XataClient extends DatabaseClient<DatabaseSchema> {
