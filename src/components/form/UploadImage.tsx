@@ -8,11 +8,18 @@ export const UploadImage = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!ref.current?.files?.[0]) return;
+
+    const file = ref.current.files[0];
+
     const formData = new FormData();
+    formData.append("file", file);
+
     fetch("/api/upload", {
       method: "POST",
       body: formData,
     });
+    console.log("Uploaded");
   };
 
   return (
