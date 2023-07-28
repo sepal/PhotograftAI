@@ -6,12 +6,19 @@ import type {
   XataRecord,
 } from "@xata.io/client";
 
-const tables = [] as const;
+const tables = [
+  { name: "Image", columns: [{ name: "file", type: "file" }] },
+] as const;
 
 export type SchemaTables = typeof tables;
 export type InferredTypes = SchemaInference<SchemaTables>;
 
-export type DatabaseSchema = {};
+export type Image = InferredTypes["Image"];
+export type ImageRecord = Image & XataRecord;
+
+export type DatabaseSchema = {
+  Image: ImageRecord;
+};
 
 const DatabaseClient = buildClient();
 
