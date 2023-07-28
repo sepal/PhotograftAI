@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Sebastian-s-workspace-u593rk.us-east-1.xata.sh/db/PhotograftAI",
+  "codegen": {
+    "output": "src/lib/xata.ts"
+  }
+}
