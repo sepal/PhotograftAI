@@ -1,0 +1,13 @@
+{
+  "id": "mig_cj1ppu5ro4ofpqqivbug",
+  "parentID": "mig_cj1p5uehgsv9hgq1hpvg",
+  "checksum": "1:f6a143c0dad7684d0701fad379fb10e3c215ae57764bc96748e15af9a32f869a",
+  "operations": [
+    {
+      "renameTable": {
+        "newName": "Images",
+        "oldName": "Image"
+      }
+    }
+  ]
+}
