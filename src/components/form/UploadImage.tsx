@@ -1,9 +1,12 @@
 "use client";
 
-import { FormEvent, useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
+import Image from "next/image";
 
 export const UploadImage = () => {
   const ref = useRef<HTMLInputElement>(null);
+
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,11 +18,18 @@ export const UploadImage = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    fetch("/api/image", {
+    const resp = await fetch("/api/image", {
       method: "POST",
       body: formData,
     });
-    console.log("Uploaded");
+
+    if (resp.status !== 200) return;
+
+    const data = await resp.json();
+
+    const id = data.images[0];
+
+    setImageUrl(`/api/image/${id}`);
   };
 
   return (
@@ -38,6 +48,17 @@ export const UploadImage = () => {
         >
           Upload
         </button>
+
+        {imageUrl && (
+          <div className="relative aspect-video max-h-[400px]">
+            <Image
+              src={imageUrl}
+              alt={imageUrl}
+              fill={true}
+              className="object-contain"
+            />
+          </div>
+        )}
       </form>
     </>
   );

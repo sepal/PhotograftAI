@@ -6,7 +6,7 @@ export async function POST(req: Request) {
 
   const data = await req.formData();
 
-  const imageUrls = [];
+  const images = [];
   for (const [key, value] of Array.from(data.entries())) {
     const isFile = typeof value == "object";
     if (isFile) {
@@ -21,14 +21,13 @@ export async function POST(req: Request) {
             .then((buffer) => Buffer.from(buffer).toString("base64")),
         },
       });
-      console.log(record.file);
 
-      imageUrls.push(record.file!.signedUrl);
+      images.push(record.id);
     }
   }
 
   return NextResponse.json({
     success: true,
-    imageUrls,
+    images,
   });
 }
