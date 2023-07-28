@@ -15,7 +15,7 @@ export const UploadImage = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    fetch("/api/upload", {
+    fetch("/api/image", {
       method: "POST",
       body: formData,
     });
