@@ -1,5 +1,8 @@
+import { getReplicateClient } from "@/lib/replicate";
+import { getAppDomain } from "@/lib/url";
 import { getXataClient } from "@/lib/xata";
 import { NextResponse } from "next/server";
+import Replicate from "replicate";
 
 type Params = {
   params: { id: string };

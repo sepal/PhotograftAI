@@ -11,7 +11,7 @@ const tables = [
     name: "Images",
     columns: [
       { name: "file", type: "file" },
-      { name: "embeddings", type: "text", defaultValue: "" },
+      { name: "embeddings", type: "file" },
     ],
   },
 ] as const;
