@@ -13,6 +13,16 @@ const tables = [
       { name: "file", type: "file" },
       { name: "embeddings", type: "file" },
     ],
+    revLinks: [{ column: "image", table: "Masks" }],
+  },
+  {
+    name: "Masks",
+    columns: [
+      { name: "file", type: "file" },
+      { name: "points", type: "text" },
+      { name: "score", type: "float" },
+      { name: "image", type: "link", link: { table: "Images" } },
+    ],
   },
 ] as const;
 
@@ -22,8 +32,12 @@ export type InferredTypes = SchemaInference<SchemaTables>;
 export type Images = InferredTypes["Images"];
 export type ImagesRecord = Images & XataRecord;
 
+export type Masks = InferredTypes["Masks"];
+export type MasksRecord = Masks & XataRecord;
+
 export type DatabaseSchema = {
   Images: ImagesRecord;
+  Masks: MasksRecord;
 };
 
 const DatabaseClient = buildClient();
