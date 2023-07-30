@@ -7,11 +7,10 @@ service MaskService {
 }
 
 message GetMaskRequest {
-  string image_id = 1;
-  repeated float points = 2;
+  string image = 1;
+  bytes points = 2;
 }
 
 message GetMaskResponse {
-  float score = 1;
-  bytes mask = 2;
+  repeated string masks = 1;
 }

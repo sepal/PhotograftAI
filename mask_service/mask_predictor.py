@@ -1,4 +1,4 @@
-from tkinter import Image
+from PIL import Image
 import torch
 from transformers import SamModel, SamProcessor
 import numpy as np
@@ -32,15 +32,6 @@ class MaskPredictor:
         ), inputs["original_sizes"].cpu(), inputs["reshaped_input_sizes"].cpu())
         scores = outputs.iou_scores
 
-        resp = []
-        # for i, (mask, score) in enumerate(zip(masks[0], scores)):
-        #     mask = mask.cpu().detach()
-        #     h, w = mask.shape[-2:]
-        #     resp.append({
-        #         "mask": mask.reshape(h, w, 1),
-        #         "score": score
-        #     })
-
         return MaskPredictor.__prep_masks_response(masks[0], scores)
 
     @staticmethod
@@ -49,15 +40,20 @@ class MaskPredictor:
             masks = masks.squeeze()
         if scores.shape[0] == 1:
             scores = scores.squeeze()
-        color = np.array([1.0, 1.0, 1.0, 1])
         resp = []
         for i, (mask, score) in enumerate(zip(masks, scores)):
-            mask = mask.cpu().detach()
             h, w = mask.shape[-2:]
-            mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)
+            mask = mask.cpu().numpy()
+            mask_array = (mask * 255).astype(np.uint8)
+
+            raw_image = Image.fromarray(mask_array)
+
+            buffer = io.BytesIO()
+            raw_image.save(buffer, format="PNG")
+            raw_image.save(f"mask_{i}.png", format="PNG")
 
             resp.append({
-                "mask": mask_image.tolist(),
-                "score": score
+                "mask": buffer,
+                "score": score.tolist(),
             })
         return resp

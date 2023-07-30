@@ -1,9 +1,13 @@
 from concurrent import futures
+import io
 from database import Files
 from mask_predictor import MaskPredictor
 import grpc
 import mask_service.mask_pb2_grpc as pb2_grpc
 import mask_service.mask_pb2 as pb2
+import json
+
+from mask_service.mask_pb2 import GetMaskResponse
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -26,17 +30,23 @@ class MaskService(pb2_grpc.MaskServiceServicer):
         self.predictor = MaskPredictor("cpu")
         self.files = Files()
 
-    def GetServerResponse(self, request, context):
-        message = request.message
+    def GetMask(self, request, context):
+        points = json.loads(request.points)
+        imageId = request.image
 
-        points = message.points
-
-        image = self.files.getImage(message.image_id)
-        embeddings = self.files.getEmbeddings(message.image_id)
+        image = self.files.getImage(imageId)
+        embeddings = self.files.getEmbeddings(imageId)
 
         masks = self.predictor.predict(image, embeddings, points)
 
-        return pb2.MaskResponse(masks=masks)
+        ids = []
+        for mask in masks:
+            resp = self.files.createMask(
+                imageId, mask['score'], points, mask['mask'])
+            record = resp.json()
+            ids.append(record['id'])
+
+        return GetMaskResponse(masks=ids)
 
 
 def serve():

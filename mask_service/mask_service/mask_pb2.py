@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17mask_service/mask.proto\x12\x0cphotograftai\"2\n\x0eGetMaskRequest\x12\x10\n\x08image_id\x18\x01 \x01(\t\x12\x0e\n\x06points\x18\x02 \x03(\x02\".\n\x0fGetMaskResponse\x12\r\n\x05score\x18\x01 \x01(\x02\x12\x0c\n\x04mask\x18\x02 \x01(\x0c\x32W\n\x0bMaskService\x12H\n\x07GetMask\x12\x1c.photograftai.GetMaskRequest\x1a\x1d.photograftai.GetMaskResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17mask_service/mask.proto\x12\x0cphotograftai\"/\n\x0eGetMaskRequest\x12\r\n\x05image\x18\x01 \x01(\t\x12\x0e\n\x06points\x18\x02 \x01(\x0c\" \n\x0fGetMaskResponse\x12\r\n\x05masks\x18\x01 \x03(\t2W\n\x0bMaskService\x12H\n\x07GetMask\x12\x1c.photograftai.GetMaskRequest\x1a\x1d.photograftai.GetMaskResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,9 +22,9 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _globals['_GETMASKREQUEST']._serialized_start=41
-  _globals['_GETMASKREQUEST']._serialized_end=91
-  _globals['_GETMASKRESPONSE']._serialized_start=93
-  _globals['_GETMASKRESPONSE']._serialized_end=139
-  _globals['_MASKSERVICE']._serialized_start=141
-  _globals['_MASKSERVICE']._serialized_end=228
+  _globals['_GETMASKREQUEST']._serialized_end=88
+  _globals['_GETMASKRESPONSE']._serialized_start=90
+  _globals['_GETMASKRESPONSE']._serialized_end=122
+  _globals['_MASKSERVICE']._serialized_start=124
+  _globals['_MASKSERVICE']._serialized_end=211
 # @@protoc_insertion_point(module_scope)
