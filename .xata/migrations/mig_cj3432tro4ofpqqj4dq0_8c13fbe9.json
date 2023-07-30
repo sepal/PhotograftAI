@@ -1,0 +1,19 @@
+{
+  "id": "mig_cj3432tro4ofpqqj4dq0",
+  "parentID": "mig_cj34314o85eu8t651a6g",
+  "checksum": "1:8c13fbe9883f0443bed3e0e98e8341ba98160c16e7dd793bcb66809abc4939f1",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "image",
+          "type": "link",
+          "link": {
+            "table": "Images"
+          }
+        },
+        "table": "Masks"
+      }
+    }
+  ]
+}

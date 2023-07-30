@@ -1,0 +1,16 @@
+{
+  "id": "mig_cj342pm5sqahjj1ie9og",
+  "parentID": "mig_cj342flro4ofpqqj4dp0",
+  "checksum": "1:7d88edf9b6fc3c89d2cf4d0a8fcb2aa95de5848dbf5e1354919f85bed1dd7317",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "score",
+          "type": "float"
+        },
+        "table": "Masks"
+      }
+    }
+  ]
+}

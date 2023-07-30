@@ -1,0 +1,16 @@
+{
+  "id": "mig_cj342flro4ofpqqj4dp0",
+  "parentID": "mig_cj342cdro4ofpqqj4do0",
+  "checksum": "1:c84cbd593a37fce03e5bc31c7674d11e2b68ab8ffb0108451071490363048290",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "points",
+          "type": "text"
+        },
+        "table": "Masks"
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "mig_cj3427tro4ofpqqj4dn0",
+  "parentID": "mig_cj2nppko85eu8t650heg",
+  "checksum": "1:d79bc8b19eb3032a19a0029bb95d68d854124b1f9dcdd7b51e72dab15b5d71c4",
+  "operations": [
+    {
+      "addTable": {
+        "table": "Masks"
+      }
+    }
+  ]
+}
