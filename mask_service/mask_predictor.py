@@ -57,7 +57,7 @@ class MaskPredictor:
             mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)
 
             resp.append({
-                "mask": mask_image,
+                "mask": mask_image.tolist(),
                 "score": score
             })
         return resp
