@@ -9,6 +9,7 @@ type Params = {
 export async function POST(req: Request, { params }: Params) {
   const { id } = params;
   const message = await req.json();
+  console.log(message);
 
   const clientService = new MaskServiceClient();
   const { client, error } = await clientService.getClient(id, message);

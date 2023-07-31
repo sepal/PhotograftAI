@@ -132,11 +132,25 @@ export const Canvas = ({ imageId }: Props) => {
     };
   }, [masks, mask]);
 
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  const handleClick = async (
+    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+  ) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
+    const point: Point = [x, y];
+    console.log([[point]]);
+    await fetch(`/api/image/${imageId}/mask`, {
+      method: "POST",
+      body: JSON.stringify([[point]]),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    setPoint(point);
   };
 
   const handleSelectMask = (e: React.ChangeEvent<HTMLSelectElement>) => {
