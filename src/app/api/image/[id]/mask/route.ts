@@ -44,26 +44,18 @@ export async function GET(req: NextRequest, { params }: Params) {
     filters["points"] = points;
   }
 
-  console.log(filters);
-
   const records = await xata.db.Masks.filter(filters)
     .sort("xata.createdAt", "desc")
-    .select(["id", "score", "file", "file.signedUrl"])
+    .select(["id", "score"])
     .getAll();
 
-  console.log(
-    records[0].file!.transform({
-      blur: blur,
-    })
-  );
-
   const result = records.map((record) => {
+    const imageUrl = `/api/mask/${record.id}`;
+
     return {
       id: record.id,
       score: record.score,
-      file: record.file!.transform({
-        blur: blur,
-      }),
+      imageUrl: imageUrl,
     };
   });
 
