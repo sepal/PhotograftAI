@@ -1,23 +1,20 @@
-import { getReplicateClient } from "@/lib/replicate";
-import { getAppDomain } from "@/lib/url";
 import { getXataClient } from "@/lib/xata";
 import { NextResponse } from "next/server";
-import Replicate from "replicate";
 
-type Params = {
-  params: { id: string };
-};
+interface Params {
+  params: { maskId: string };
+}
 
 export async function GET(req: Request, { params }: Params) {
-  const { id } = params;
+  const { maskId } = params;
 
-  if (!id) {
+  if (!maskId) {
     return new NextResponse(null, { status: 400, statusText: "Bad Request" });
   }
 
   const xata = getXataClient();
 
-  const record = await xata.db.Images.read(id, [
+  const record = await xata.db.Masks.read(maskId, [
     "file.name",
     "file.base64Content",
     "file.mediaType",

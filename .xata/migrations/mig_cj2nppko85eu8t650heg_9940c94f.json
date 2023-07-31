@@ -1,0 +1,16 @@
+{
+  "id": "mig_cj2nppko85eu8t650heg",
+  "parentID": "mig_cj2npm4o85eu8t650hdg",
+  "checksum": "1:9940c94f3e60f52220863d89675e1101b5c4fb9fff07ca2528ea37af9751af6d",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "embeddings",
+          "type": "file"
+        },
+        "table": "Images"
+      }
+    }
+  ]
+}
