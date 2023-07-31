@@ -12,18 +12,6 @@ from mask_service.mask_pb2 import GetMaskResponse
 from dotenv import load_dotenv
 load_dotenv()
 
-# files = Files()
-# image = files.getImage("rec_cj2plqls37a65hlj4440")
-# embeddings = files.getEmbeddings("rec_cj2plqls37a65hlj4440")
-
-# predictor = MaskPredictor("cpu")
-# points = [[[170, 50]]]
-
-
-# masks = predictor.predict(image, embeddings, points)
-
-# print(masks[0]['score'])
-
 
 class MaskService(pb2_grpc.MaskServiceServicer):
     def __init__(self):

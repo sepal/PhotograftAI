@@ -25,7 +25,7 @@ class MaskPredictor:
         inputs = self.__processor(
             images=image, input_points=points, return_tensors="pt").to(self.__device)
         inputs.pop("pixel_values", None)
-        inputs.update({"image_embeddings": embeddings})
+        inputs.update({"image_embeddings": embeddings.to(self.__device)})
         with torch.no_grad():
             outputs = self.__model(**inputs)
         masks = self.__processor.image_processor.post_process_masks(outputs.pred_masks.cpu(
