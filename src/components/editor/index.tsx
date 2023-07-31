@@ -82,7 +82,7 @@ export const Canvas = ({ imageId }: Props) => {
       if (canvasCtxRef.current === null) return;
 
       if (!maskUrl) {
-        canvasCtxRef.current.drawImage(img, 0, 0, 400, 400);
+        canvasCtxRef.current.drawImage(img, 0, 0, 512, 512);
         return;
       }
 
@@ -93,8 +93,8 @@ export const Canvas = ({ imageId }: Props) => {
       maskImage.onload = () => {
         if (canvasCtxRef.current === null) return;
         if (!offScreenCtx) return;
-        offScreenCtx.drawImage(maskImage, 0, 0, 400, 400);
-        const maskData = offScreenCtx.getImageData(0, 0, 400, 400);
+        offScreenCtx.drawImage(maskImage, 0, 0, 512, 512);
+        const maskData = offScreenCtx.getImageData(0, 0, 512, 512);
 
         let d = maskData.data;
 
@@ -110,7 +110,7 @@ export const Canvas = ({ imageId }: Props) => {
 
         canvasCtxRef.current.putImageData(maskData, 0, 0);
         canvasCtxRef.current.globalCompositeOperation = "destination-over";
-        canvasCtxRef.current.drawImage(img, 0, 0, 400, 400);
+        canvasCtxRef.current.drawImage(img, 0, 0, 512, 512);
       };
     };
   }, [masks, mask]);
@@ -193,8 +193,8 @@ export const Canvas = ({ imageId }: Props) => {
         <canvas
           ref={canvasRef}
           onClick={handleClick}
-          width="400px"
-          height="400px"
+          width="512px"
+          height="512px"
           className="m-auto"
         />
       </div>
