@@ -12,4 +12,4 @@ export const IMAGE_DIMENSIONS = [
   [640, 1536]
 ];
 export const MAX_RANDOM_SEED = 4294967295;
-export const DIFFUSION = 'SAMPLER_K_LMS';
+export const DIFFUSION = 'SAMPLER_K_DPM_2';
