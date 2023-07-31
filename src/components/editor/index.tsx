@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ProcessButton, ProcessingState } from "../forms/ProcessButton";
+import { useRouter } from "next/navigation";
 
 interface Props {
   imageId: string;
@@ -16,31 +18,6 @@ type Point = [number, number];
 
 type MaskColor = [number, number, number, number];
 
-function drawMask(
-  ctx: CanvasRenderingContext2D,
-  img1: HTMLImageElement,
-  maskSrc: string,
-  maskColor: MaskColor
-): void {
-  let imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.drawImage(img1, 0, 0);
-  let maskData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-  //ctx.putImageData(imageData, 0, 0); // Reset to original image
-
-  let d = maskData.data;
-  for (let i = 0; i < d.length; i += 4) {
-    // Calculate the brightness of the pixel
-    let brightness = (d[i] + d[i + 1] + d[i + 2]) / 3 / 255;
-
-    // Overwrite this pixel with your mask color, modifying the alpha channel based on the brightness
-    d[i] = maskColor[0]; // Red channel
-    d[i + 1] = maskColor[1]; // Green channel
-    d[i + 2] = maskColor[2]; // Blue channel
-    d[i + 3] = maskColor[3] * brightness * 255; // Alpha channel
-  }
-
-  ctx.putImageData(maskData, 0, 0);
-}
 
 export const Canvas = ({ imageId }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -48,6 +25,10 @@ export const Canvas = ({ imageId }: Props) => {
   const [point, setPoint] = useState<Point>([75, 75]);
   const [masks, setMasks] = useState<Mask[]>([]);
   const [mask, setMask] = useState<string | null>(null);
+  const [generateState, setGenerateState] = useState<ProcessingState>(ProcessingState.Idle);
+  const promptInput = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   const color: MaskColor = [0, 120, 1000, 0.5];
 
@@ -162,9 +143,53 @@ export const Canvas = ({ imageId }: Props) => {
     setMask(maskId);
   };
 
+  const handleGenerateImage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!promptInput.current?.value) return;
+    const prompt = promptInput.current?.value;
+    if (!mask) return;
+    setGenerateState(ProcessingState.Processing);
+    const resp = await fetch(`/api/mask-inpaint`, {
+      method: "POST",
+      body: JSON.stringify({
+        prompt: prompt,
+        maskId: mask,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await resp.json();
+
+    if (data.success != true || !data.image) {
+      console.log(data);
+      return;
+    }
+
+    const imageId = data.image;
+
+    const checkEmbeddings = async () => {
+      const resp = await fetch(`/api/image/${imageId}/embedding`);
+      const data = await resp.json();
+      console.log(data);
+      if (data.success === true) {
+        router.push(`/editor/${imageId}`);
+        return;
+      } else {
+        setTimeout(checkEmbeddings, 1000);
+      }
+    };
+
+    checkEmbeddings();
+
+    console.log(data);
+  }
+
   return (
-    <div className="flex flex-column">
-      <div>
+    <div className="flex flex-col justify-between items-stretch">
+      <div className="grow w-full">
         <canvas
           ref={canvasRef}
           onClick={handleClick}
@@ -173,7 +198,7 @@ export const Canvas = ({ imageId }: Props) => {
           className="m-auto"
         />
       </div>
-      <div className="">
+      <form className="flex flex-col my-4" onSubmit={handleGenerateImage} >
         <select onChange={handleSelectMask}>
           {masks.map((mask) => (
             <option key={mask.id} value={mask.id}>
@@ -181,7 +206,11 @@ export const Canvas = ({ imageId }: Props) => {
             </option>
           ))}
         </select>
-      </div>
+        <input className="border my-2" type="text" placeholder="A golden hour sky..." ref={promptInput} />
+        <ProcessButton state={generateState}>
+          Generate
+        </ProcessButton>
+      </form>
     </div>
   );
 };

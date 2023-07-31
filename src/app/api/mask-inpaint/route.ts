@@ -1,4 +1,5 @@
 import { generateInpaintingMask } from "@/lib/stabilityAI";
+import { getAppDomain } from "@/lib/url";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
