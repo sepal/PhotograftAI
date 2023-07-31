@@ -15,9 +15,15 @@ export async function POST(req: Request, { params }: Params) {
 
   if (resp.status != "succeeded") {
     console.log("Failed prediction");
-    return NextResponse.json({
-      success: true,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        error: resp.error,
+      },
+      {
+        status: 500,
+      }
+    );
   }
 
   const { output } = resp;
@@ -44,6 +50,39 @@ export async function POST(req: Request, { params }: Params) {
       mediaType: "application/zip",
     },
   });
+
+  return NextResponse.json({
+    success: true,
+  });
+}
+
+export async function GET(req: Request, { params }: Params) {
+  const { id } = params;
+  console.log("Checking embeddings for", id);
+
+  const xata = getXataClient();
+  const record = await xata.db.Images.read(id, ["embeddings"]);
+  if (!record) {
+    return NextResponse.json(
+      {
+        error: "Image not found",
+      },
+      {
+        status: 404,
+      }
+    );
+  }
+
+  if (!record.embeddings) {
+    return NextResponse.json(
+      {
+        error: "No embeddings found",
+      },
+      {
+        status: 404,
+      }
+    );
+  }
 
   return NextResponse.json({
     success: true,

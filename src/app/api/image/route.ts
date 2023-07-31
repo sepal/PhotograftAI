@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
       await replicate.predictions.create({
         version:
-          "99d624dba26975fe4922e0a09fd6ef9a21c7f0cfff5e9554f338b8be47cccd1a",
+          "6169e3d14e9d16d2efd9caf122c94cc4aa916ccef7ae2f85afc930a874beffd9",
         input: {
           image: imageUrl,
         },

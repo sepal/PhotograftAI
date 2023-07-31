@@ -59,6 +59,7 @@ export const Canvas = ({ imageId }: Props) => {
 
       const newMasks = data["body"] as Mask[];
 
+      if (newMasks.length === 0) return;
       setMask(newMasks[0].id);
       setMasks(newMasks);
     };
@@ -87,9 +88,7 @@ export const Canvas = ({ imageId }: Props) => {
     offScreenCanvas.height = canvasHeight;
     const offScreenCtx = offScreenCanvas.getContext("2d");
 
-    if (!mask) return;
-
-    const maskUrl = masks.find((m) => m.id === mask)?.imageUrl;
+    const maskUrl = masks?.find((m) => m.id === mask)?.imageUrl;
 
     canvasCtxRef.current!.clearRect(
       0,
@@ -101,16 +100,19 @@ export const Canvas = ({ imageId }: Props) => {
     img.onload = () => {
       if (canvasCtxRef.current === null) return;
 
-      if (!maskUrl) return;
+      if (!maskUrl) {
+        canvasCtxRef.current.drawImage(img, 0, 0, 400, 400);
+        return;
+      }
 
-      const mask = new Image();
-      mask.src = maskUrl;
+      const maskImage = new Image();
+      maskImage.src = maskUrl;
       console.log(maskUrl);
 
-      mask.onload = () => {
+      maskImage.onload = () => {
         if (canvasCtxRef.current === null) return;
         if (!offScreenCtx) return;
-        offScreenCtx.drawImage(mask, 0, 0, 400, 400);
+        offScreenCtx.drawImage(maskImage, 0, 0, 400, 400);
         const maskData = offScreenCtx.getImageData(0, 0, 400, 400);
 
         let d = maskData.data;
@@ -142,13 +144,15 @@ export const Canvas = ({ imageId }: Props) => {
 
     const point: Point = [x, y];
     console.log([[point]]);
-    await fetch(`/api/image/${imageId}/mask`, {
+    const resp = await fetch(`/api/image/${imageId}/mask`, {
       method: "POST",
       body: JSON.stringify([[point]]),
       headers: {
         "Content-Type": "application/json",
       },
     });
+
+    console.log(await resp.json());
 
     setPoint(point);
   };

@@ -9,7 +9,7 @@ type Params = {
 export async function POST(req: Request, { params }: Params) {
   const { id } = params;
   const message = await req.json();
-  console.log(message);
+  console.log("Requesting mask for image", id, "for points ", message);
 
   const clientService = new MaskServiceClient();
   const { client, error } = await clientService.getClient(id, message);
@@ -19,6 +19,8 @@ export async function POST(req: Request, { params }: Params) {
       body: { error: error.details },
     });
   }
+
+  console.log(client);
 
   return NextResponse.json({
     status: 200,
