@@ -1,3 +1,4 @@
+import { createImage } from "@/lib/api";
 import { generateInpaintingMask } from "@/lib/stabilityAI";
 import { getAppDomain } from "@/lib/url";
 import { getXataClient } from "@/lib/xata";
@@ -32,24 +33,20 @@ export async function POST(req: NextRequest) {
 
   const imageBuffer = Buffer.from(imageContent, "base64");
   const mask = Buffer.from(maskContent, "base64");
-
+  // Stable diffusion expects the white black part to be the mask, which is the opposite from what 
+  // we get from SAM. So we invert the mask here.
   const invertedMask = await sharp(mask).negate().toBuffer();
 
   const generated = await generateInpaintingMask(prompt, imageBuffer, invertedMask);
 
+  // We take the prompt and turn it into a filename.
   const filename = prompt.replace(/\s/g, "-").toLowerCase() + ".png"
-  
-  const generatedRecord = await xata.db.Images.create({
-    file: {
-      base64Content: generated.imageBuffer.toString("base64"),
-      mediaType: generated.mimeType,
-      name: filename,
-    },
-  });
+
+  const imageId = await createImage(filename, generated.mimeType, generated.imageBuffer);
 
   return NextResponse.json({
     success: true,
-    image: generatedRecord.id
+    image: imageId
   });
 
 }
