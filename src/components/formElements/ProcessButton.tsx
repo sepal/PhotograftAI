@@ -1,5 +1,5 @@
 import { HTMLProps } from "react";
-import { Spinner } from "../icons/spinner";
+import Spinner from "../icons/Spinner";
 
 export enum ProcessingState {
   Idle,
@@ -13,18 +13,21 @@ interface Props extends HTMLProps<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-export const ProcessButton = ({ primary = true, state = ProcessingState.Idle, children, ...props }: Props) => {
-  let classes = `px-2 py-1 my-2 rounded-md border bg-indigo-500 text-white`
+export const ProcessButton = ({
+  primary = true,
+  state = ProcessingState.Idle,
+  children,
+  ...props
+}: Props) => {
+  let classes = `px-2 py-1 my-2 rounded-md border bg-indigo-500 text-white`;
 
   if (primary) {
-    classes += " bg-indigo-500 text-white"
+    classes += " bg-indigo-500 text-white";
   } else {
-    classes += " bg-slate-500"
+    classes += " bg-slate-500";
   }
 
   classes += " " + props.className;
-
-
 
   return (
     <button
@@ -35,5 +38,5 @@ export const ProcessButton = ({ primary = true, state = ProcessingState.Idle, ch
       {state !== ProcessingState.Idle && <Spinner />}{" "}
       {state === ProcessingState.Idle ? children : "Processing..."}
     </button>
-  )
-}
+  );
+};
