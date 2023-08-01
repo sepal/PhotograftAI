@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
 import { useRouter } from "next/navigation";
+import HorizontalSlider from "../formElements/Slider";
 
 interface Props {
   imageId: string;
@@ -18,14 +19,15 @@ type Point = [number, number];
 
 type MaskColor = [number, number, number, number];
 
-
 export const Canvas = ({ imageId }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
   const [point, setPoint] = useState<Point>([75, 75]);
   const [masks, setMasks] = useState<Mask[]>([]);
   const [mask, setMask] = useState<string | null>(null);
-  const [generateState, setGenerateState] = useState<ProcessingState>(ProcessingState.Idle);
+  const [generateState, setGenerateState] = useState<ProcessingState>(
+    ProcessingState.Idle
+  );
   const promptInput = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -138,11 +140,6 @@ export const Canvas = ({ imageId }: Props) => {
     setPoint(point);
   };
 
-  const handleSelectMask = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const maskId = e.target.value;
-    setMask(maskId);
-  };
-
   const handleGenerateImage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -185,7 +182,11 @@ export const Canvas = ({ imageId }: Props) => {
     checkEmbeddings();
 
     console.log(data);
-  }
+  };
+
+  const handleSliderChange = (value: any) => {
+    setMask(masks[value].id);
+  };
 
   return (
     <div className="flex flex-col justify-between items-stretch">
@@ -198,18 +199,24 @@ export const Canvas = ({ imageId }: Props) => {
           className="m-auto"
         />
       </div>
-      <form className="flex flex-col my-4" onSubmit={handleGenerateImage} >
-        <select onChange={handleSelectMask}>
-          {masks.map((mask) => (
-            <option key={mask.id} value={mask.id}>
-              {mask.score}
-            </option>
-          ))}
-        </select>
-        <input className="border my-2" type="text" placeholder="A golden hour sky..." ref={promptInput} />
-        <ProcessButton state={generateState}>
-          Generate
-        </ProcessButton>
+      <form className="flex flex-col my-4" onSubmit={handleGenerateImage}>
+        <div className="relative">
+          <HorizontalSlider
+            className="h-8 w-full my-4"
+            defaultValue={0}
+            max={masks.length - 1}
+            marks
+            onChange={handleSliderChange}
+          />
+        </div>
+
+        <input
+          className="border my-2"
+          type="text"
+          placeholder="A golden hour sky..."
+          ref={promptInput}
+        />
+        <ProcessButton state={generateState}>Generate</ProcessButton>
       </form>
     </div>
   );
