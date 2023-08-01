@@ -1,6 +1,5 @@
-import { createImage } from "@/lib/api";
+import { OperationType, createImage, createOperation } from "@/lib/api";
 import { generateInpaintingMask } from "@/lib/stabilityAI";
-import { getAppDomain } from "@/lib/url";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
@@ -11,12 +10,11 @@ interface MaskInpaintBody {
 }
 
 export async function POST(req: NextRequest) {
-
-
   const { prompt, maskId } = (await req.json()) as MaskInpaintBody;
 
   const xata = await getXataClient();
   const record = await xata.db.Masks.read(maskId, [
+    "image.id",
     "image.file.base64Content",
     "file.base64Content"
   ]);
@@ -43,6 +41,7 @@ export async function POST(req: NextRequest) {
   const filename = prompt.replace(/\s/g, "-").toLowerCase() + ".png"
 
   const imageId = await createImage(filename, generated.mimeType, generated.imageBuffer);
+  await createOperation(prompt, imageId, [maskId], OperationType.MaskInpaint);
 
   return NextResponse.json({
     success: true,

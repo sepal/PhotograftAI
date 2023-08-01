@@ -1,0 +1,19 @@
+{
+  "id": "mig_cj4179jv8qvm0v9qc4n0",
+  "parentID": "mig_cj4174ptiuf2fpcl5k3g",
+  "checksum": "1:b6eb2ae5077ce2100c5f6b5bef4ca7c7c6c9b53c4993330f717331fdb51fa2a1",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "OriginalImage",
+          "type": "link",
+          "link": {
+            "table": "Images"
+          }
+        },
+        "table": "ImageForks"
+      }
+    }
+  ]
+}

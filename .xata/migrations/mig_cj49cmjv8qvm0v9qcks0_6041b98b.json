@@ -1,0 +1,16 @@
+{
+  "id": "mig_cj49cmjv8qvm0v9qcks0",
+  "parentID": "mig_cj49cjhtiuf2fpcl6kf0",
+  "checksum": "1:6041b98b213b4f36e3194f7e1f4796f3708e50bdd84b9e40e6424a4d6ab922da",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "prompt",
+          "type": "string"
+        },
+        "table": "Operations"
+      }
+    }
+  ]
+}
