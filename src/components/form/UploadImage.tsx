@@ -1,35 +1,27 @@
 "use client";
 
 import { FormEvent, useRef, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Spinner } from "../icons/spinner";
-
-enum ProcessingState {
-  Idle,
-  Uploading,
-  WaitForEmbeddings,
-  Done,
-}
+import { ImageDrop } from "../formElements/ImageDrop";
+import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
 
 export const UploadImage = () => {
   const router = useRouter();
   const [state, setState] = useState<ProcessingState>(ProcessingState.Idle);
-  const ref = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const handleDrop = (file: File) => {
+    setSelectedFile(file);
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!ref.current?.files?.[0]) return;
-
-    const file = ref.current.files[0];
-
+    if (!selectedFile) return;
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", selectedFile);
 
-    setState(ProcessingState.Uploading);
+    setState(ProcessingState.Processing);
 
     const resp = await fetch("/api/image", {
       method: "POST",
@@ -40,7 +32,6 @@ export const UploadImage = () => {
       console.error("Error uploading image", resp.status, resp.statusText);
       return;
     }
-    setState(ProcessingState.WaitForEmbeddings);
     const data = await resp.json();
 
     const id = data.images[0];
@@ -67,29 +58,12 @@ export const UploadImage = () => {
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col max-w-md mx-auto">
-        {state === ProcessingState.Idle && (
-          <>
-            <input
-              className="my-2"
-              type="file"
-              name="file"
-              ref={ref}
-              accept="image/*"
-            />
-          </>
-        )}
+        <ImageDrop
+          onDrop={handleDrop}
+          disabled={state != ProcessingState.Idle}
+        />
 
-        <button
-          className={`px-2 py-1 my-2 rounded-md border bg-indigo-500 text-white ${
-            state !== ProcessingState.Idle &&
-            "transition ease-in-out duration-150 cursor-not-allowed"
-          }`}
-          disabled={state !== ProcessingState.Idle}
-          type="submit"
-        >
-          {state !== ProcessingState.Idle && <Spinner />}{" "}
-          {state === ProcessingState.Idle ? "Upload" : "Processing..."}
-        </button>
+        <ProcessButton state={state}>Upload</ProcessButton>
       </form>
     </>
   );

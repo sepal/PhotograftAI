@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ProcessButton, ProcessingState } from "../forms/ProcessButton";
+import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
 import { useRouter } from "next/navigation";
+import HorizontalSlider from "../formElements/Slider";
 
 interface Props {
   imageId: string;
@@ -18,14 +19,15 @@ type Point = [number, number];
 
 type MaskColor = [number, number, number, number];
 
-
 export const Canvas = ({ imageId }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
   const [point, setPoint] = useState<Point>([75, 75]);
   const [masks, setMasks] = useState<Mask[]>([]);
   const [mask, setMask] = useState<string | null>(null);
-  const [generateState, setGenerateState] = useState<ProcessingState>(ProcessingState.Idle);
+  const [generateState, setGenerateState] = useState<ProcessingState>(
+    ProcessingState.Idle
+  );
   const promptInput = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -118,10 +120,14 @@ export const Canvas = ({ imageId }: Props) => {
   const handleClick = async (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
+    if (!canvasRef.current) return;
     const rect = canvasRef.current?.getBoundingClientRect();
+    const widthRation = canvasRef.current.width / canvasRef.current.clientWidth;
+    const heightRatio =
+      canvasRef.current.height / canvasRef.current.clientHeight;
     if (!rect) return;
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left) * widthRation;
+    const y = (e.clientY - rect.top) * heightRatio;
 
     const point: Point = [x, y];
     console.log([[point]]);
@@ -136,11 +142,6 @@ export const Canvas = ({ imageId }: Props) => {
     console.log(await resp.json());
 
     setPoint(point);
-  };
-
-  const handleSelectMask = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const maskId = e.target.value;
-    setMask(maskId);
   };
 
   const handleGenerateImage = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -185,31 +186,40 @@ export const Canvas = ({ imageId }: Props) => {
     checkEmbeddings();
 
     console.log(data);
-  }
+  };
+
+  const handleSliderChange = (value: any) => {
+    setMask(masks[value].id);
+  };
 
   return (
-    <div className="flex flex-col justify-between items-stretch">
+    <div className="flex flex-col justify-between items-stretch max-w-lg m-auto">
       <div className="grow w-full">
         <canvas
           ref={canvasRef}
           onClick={handleClick}
           width="512px"
           height="512px"
-          className="m-auto"
+          className="m-auto w-full"
         />
       </div>
-      <form className="flex flex-col my-4" onSubmit={handleGenerateImage} >
-        <select onChange={handleSelectMask}>
-          {masks.map((mask) => (
-            <option key={mask.id} value={mask.id}>
-              {mask.score}
-            </option>
-          ))}
-        </select>
-        <input className="border my-2" type="text" placeholder="A golden hour sky..." ref={promptInput} />
-        <ProcessButton state={generateState}>
-          Generate
-        </ProcessButton>
+      <form className="flex flex-col my-4" onSubmit={handleGenerateImage}>
+        {masks.length > 0 && (
+          <HorizontalSlider
+            className="h-8 w-full my-4"
+            max={masks.length - 1}
+            marks
+            onChange={handleSliderChange}
+          />
+        )}
+
+        <input
+          className="border my-2"
+          type="text"
+          placeholder="A golden hour sky..."
+          ref={promptInput}
+        />
+        <ProcessButton state={generateState}>Generate</ProcessButton>
       </form>
     </div>
   );
