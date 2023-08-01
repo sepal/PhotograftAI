@@ -28,6 +28,7 @@ export const Canvas = ({ imageId }: Props) => {
   const [generateState, setGenerateState] = useState<ProcessingState>(
     ProcessingState.Idle
   );
+  
   const promptInput = useRef<HTMLTextAreaElement>(null);
 
   const router = useRouter();
