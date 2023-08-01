@@ -204,15 +204,14 @@ export const Canvas = ({ imageId }: Props) => {
         />
       </div>
       <form className="flex flex-col my-4" onSubmit={handleGenerateImage}>
-        <div className="relative">
+        {masks.length > 0 && (
           <HorizontalSlider
             className="h-8 w-full my-4"
-            defaultValue={0}
             max={masks.length - 1}
             marks
             onChange={handleSliderChange}
           />
-        </div>
+        )}
 
         <input
           className="border my-2"
