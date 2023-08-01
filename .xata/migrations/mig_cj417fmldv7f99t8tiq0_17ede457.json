@@ -1,0 +1,18 @@
+{
+  "id": "mig_cj417fmldv7f99t8tiq0",
+  "parentID": "mig_cj4179jv8qvm0v9qc4n0",
+  "checksum": "1:17ede457849ac305cc264b9b12ca4394417d75503eeabd23987095c12db2cac7",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "Masks",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "[]"
+        },
+        "table": "ImageForks"
+      }
+    }
+  ]
+}

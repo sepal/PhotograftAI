@@ -13,7 +13,10 @@ const tables = [
       { name: "file", type: "file" },
       { name: "embeddings", type: "file" },
     ],
-    revLinks: [{ column: "image", table: "Masks" }],
+    revLinks: [
+      { column: "image", table: "Masks" },
+      { column: "original", table: "Operations" },
+    ],
   },
   {
     name: "Masks",
@@ -22,6 +25,15 @@ const tables = [
       { name: "points", type: "text" },
       { name: "score", type: "float" },
       { name: "image", type: "link", link: { table: "Images" } },
+    ],
+  },
+  {
+    name: "Operations",
+    columns: [
+      { name: "original", type: "link", link: { table: "Images" } },
+      { name: "masks", type: "text", notNull: true, defaultValue: "[]" },
+      { name: "type", type: "string" },
+      { name: "prompt", type: "string" },
     ],
   },
 ] as const;
@@ -35,9 +47,13 @@ export type ImagesRecord = Images & XataRecord;
 export type Masks = InferredTypes["Masks"];
 export type MasksRecord = Masks & XataRecord;
 
+export type Operations = InferredTypes["Operations"];
+export type OperationsRecord = Operations & XataRecord;
+
 export type DatabaseSchema = {
   Images: ImagesRecord;
   Masks: MasksRecord;
+  Operations: OperationsRecord;
 };
 
 const DatabaseClient = buildClient();

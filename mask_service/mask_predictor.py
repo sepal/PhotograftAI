@@ -46,6 +46,7 @@ class MaskPredictor:
             mask = mask.cpu().numpy()
             mask_array = (mask * 255).astype(np.uint8)
 
+            print(mask_array.shape)
             raw_image = Image.fromarray(mask_array)
 
             buffer = io.BytesIO()

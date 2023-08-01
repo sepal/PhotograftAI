@@ -1,0 +1,13 @@
+{
+  "id": "mig_cj49cgjv8qvm0v9qckr0",
+  "parentID": "mig_cj495orv8qvm0v9qckl0",
+  "checksum": "1:fa92d6f3693c872cdd46d4311e325d9bb2128980f5902c910e2c80cc87f43e64",
+  "operations": [
+    {
+      "renameTable": {
+        "newName": "Operations",
+        "oldName": "ImageForks"
+      }
+    }
+  ]
+}

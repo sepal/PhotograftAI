@@ -1,0 +1,14 @@
+{
+  "id": "mig_cj495orv8qvm0v9qckl0",
+  "parentID": "mig_cj495neldv7f99t8ucig",
+  "checksum": "1:1096c25a24d047f5deb4b7edd90e16267150ce13a9bb0813c88f4f40fec0e52b",
+  "operations": [
+    {
+      "renameColumn": {
+        "newName": "masks",
+        "oldName": "Masks",
+        "table": "ImageForks"
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "mig_cj4174ptiuf2fpcl5k3g",
+  "parentID": "mig_cj40mf9tiuf2fpcl5ik0",
+  "checksum": "1:7e18b6eb11a2bb577440b7294d6b1509ae88e27a3902734744b7eaf1160ccf56",
+  "operations": [
+    {
+      "addTable": {
+        "table": "ImageForks"
+      }
+    }
+  ]
+}
