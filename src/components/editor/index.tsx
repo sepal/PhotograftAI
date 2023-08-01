@@ -28,7 +28,8 @@ export const Canvas = ({ imageId }: Props) => {
   const [generateState, setGenerateState] = useState<ProcessingState>(
     ProcessingState.Idle
   );
-  const promptInput = useRef<HTMLInputElement>(null);
+  
+  const promptInput = useRef<HTMLTextAreaElement>(null);
 
   const router = useRouter();
 
@@ -213,9 +214,8 @@ export const Canvas = ({ imageId }: Props) => {
           />
         )}
 
-        <input
-          className="border my-2"
-          type="text"
+        <textarea
+          className="border my-2 p-1 border-slate-500 rounded"
           placeholder="A golden hour sky..."
           ref={promptInput}
         />
