@@ -1,6 +1,5 @@
 import { Canvas } from "@/components/editor";
 
-
 export default async function Page({
   params,
 }: {
@@ -9,7 +8,7 @@ export default async function Page({
   const { imageId } = params;
 
   return (
-    <div className="w-4/12 mx-auto">
+    <div className="p-4 mx-auto">
       <Canvas imageId={imageId} />
     </div>
   );

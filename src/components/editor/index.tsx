@@ -120,10 +120,14 @@ export const Canvas = ({ imageId }: Props) => {
   const handleClick = async (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
+    if (!canvasRef.current) return;
     const rect = canvasRef.current?.getBoundingClientRect();
+    const widthRation = canvasRef.current.width / canvasRef.current.clientWidth;
+    const heightRatio =
+      canvasRef.current.height / canvasRef.current.clientHeight;
     if (!rect) return;
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left) * widthRation;
+    const y = (e.clientY - rect.top) * heightRatio;
 
     const point: Point = [x, y];
     console.log([[point]]);
@@ -189,14 +193,14 @@ export const Canvas = ({ imageId }: Props) => {
   };
 
   return (
-    <div className="flex flex-col justify-between items-stretch">
+    <div className="flex flex-col justify-between items-stretch max-w-lg m-auto">
       <div className="grow w-full">
         <canvas
           ref={canvasRef}
           onClick={handleClick}
           width="512px"
           height="512px"
-          className="m-auto"
+          className="m-auto w-full"
         />
       </div>
       <form className="flex flex-col my-4" onSubmit={handleGenerateImage}>
