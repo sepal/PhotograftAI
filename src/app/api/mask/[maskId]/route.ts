@@ -16,24 +16,28 @@ export async function GET(req: Request, { params }: Params) {
 
   const record = await xata.db.Masks.read(maskId, [
     "file.name",
-    "file.base64Content",
+    "file.signedUrl",
     "file.mediaType",
   ]);
 
-  if (!record) {
+
+  if (!record?.file?.signedUrl) {
     return new NextResponse(null, { status: 404, statusText: "Not Found" });
   }
 
-  if (!record.file?.base64Content) {
-    return new NextResponse(null, { status: 404, statusText: "Not Found" });
-  }
-
-  const buffer = Buffer.from(record.file.base64Content, "base64");
-
-  return new NextResponse(buffer, {
-    headers: {
-      "Content-Type": record.file.mediaType,
-      "Content-Disposition": `inline; filename="${record.file.name}"`,
-    },
+  const { signedUrl } = record.file.transform({
+    blur: 1.5
   });
+
+  if (!signedUrl) {
+    return new NextResponse(null, { status: 404, statusText: "Not Found" });
+  }
+
+  const response = await fetch(signedUrl);
+
+  if (!response.body) {
+    return new NextResponse(null, { status: 404, statusText: "Not Found" });
+  }
+
+  return new NextResponse(response.body)
 }
