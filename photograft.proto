@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package photograftai;
+
+service PhotograftService {
+  rpc GetMask(MaskRequest) returns (MaskResponse) {}
+}
+
+// A mask requests consits of an xata image id and a buffer containing a json points array.
+message MaskRequest {
+  string image = 1;
+  bytes points = 2;
+}
+
+// The mask response contains the xata mask id. 
+message MaskResponse {
+  repeated string masks = 1;
+}
