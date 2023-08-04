@@ -3,17 +3,17 @@ import io
 from database import Files
 from mask_predictor import MaskPredictor
 import grpc
-import mask_service.mask_pb2_grpc as pb2_grpc
-import mask_service.mask_pb2 as pb2
+import photograft_pb2_grpc as pb2_grpc
+import photograft_pb2 as pb2
 import json
 
-from mask_service.mask_pb2 import GetMaskResponse
+from photograft_pb2 import MaskResponse
 
 from dotenv import load_dotenv
 load_dotenv()
 
 
-class MaskService(pb2_grpc.MaskServiceServicer):
+class PhotograftService(pb2_grpc.PhotograftServiceServicer):
     def __init__(self):
         self.predictor = MaskPredictor("cpu")
         self.files = Files()
@@ -34,13 +34,14 @@ class MaskService(pb2_grpc.MaskServiceServicer):
             record = resp.json()
             ids.append(record['id'])
 
-        return GetMaskResponse(masks=ids)
+        return MaskResponse(masks=ids)
 
 
 def serve():
     print("Starting server...")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    pb2_grpc.add_MaskServiceServicer_to_server(MaskService(), server)
+    pb2_grpc.add_PhotograftServiceServicer_to_server(
+        PhotograftService(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     print("Server started at port 50051")

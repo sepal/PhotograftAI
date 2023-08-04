@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from mask_service import mask_pb2 as mask__service_dot_mask__pb2
+import photograft_pb2 as photograft__pb2
 
 
-class MaskServiceStub(object):
+class PhotograftServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,13 +15,13 @@ class MaskServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GetMask = channel.unary_unary(
-                '/photograftai.MaskService/GetMask',
-                request_serializer=mask__service_dot_mask__pb2.GetMaskRequest.SerializeToString,
-                response_deserializer=mask__service_dot_mask__pb2.GetMaskResponse.FromString,
+                '/photograftai.PhotograftService/GetMask',
+                request_serializer=photograft__pb2.MaskRequest.SerializeToString,
+                response_deserializer=photograft__pb2.MaskResponse.FromString,
                 )
 
 
-class MaskServiceServicer(object):
+class PhotograftServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetMask(self, request, context):
@@ -31,21 +31,21 @@ class MaskServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_MaskServiceServicer_to_server(servicer, server):
+def add_PhotograftServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetMask': grpc.unary_unary_rpc_method_handler(
                     servicer.GetMask,
-                    request_deserializer=mask__service_dot_mask__pb2.GetMaskRequest.FromString,
-                    response_serializer=mask__service_dot_mask__pb2.GetMaskResponse.SerializeToString,
+                    request_deserializer=photograft__pb2.MaskRequest.FromString,
+                    response_serializer=photograft__pb2.MaskResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'photograftai.MaskService', rpc_method_handlers)
+            'photograftai.PhotograftService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class MaskService(object):
+class PhotograftService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -59,8 +59,8 @@ class MaskService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/photograftai.MaskService/GetMask',
-            mask__service_dot_mask__pb2.GetMaskRequest.SerializeToString,
-            mask__service_dot_mask__pb2.GetMaskResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/photograftai.PhotograftService/GetMask',
+            photograft__pb2.MaskRequest.SerializeToString,
+            photograft__pb2.MaskResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
