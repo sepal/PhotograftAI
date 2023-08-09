@@ -11,20 +11,12 @@ export async function POST(req: Request, { params }: Params) {
   const message = await req.json();
   console.log("Requesting mask for image", id, "for points ", message);
 
-  const { client, error } = await getMask(id, message);
-  if (error) {
-    return NextResponse.json({
-      status: 500,
-      body: { error: error.details },
-    });
-  }
-
-  console.log(client);
+  const masks = await getMask(id, message);
 
   return NextResponse.json({
     status: 200,
     body: {
-      maskIds: client!.masks,
+      maskIds: masks,
     },
   });
 }

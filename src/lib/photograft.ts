@@ -29,9 +29,14 @@ const target = "localhost:50051";
 
 export const getMask = async (image: string, pointArray: number[][]) => {
   const points = Buffer.from(JSON.stringify(pointArray));
-  const getMask = promisify(getServiceClient().getMask).bind(this);
 
-  return await getMask({ image, points })
-    .then((client) => ({ client, error: null }))
-    .catch((error) => ({ error, client: null }));
+  const serviceClient = getServiceClient();
+  const promise = new Promise((resolve, reject) => {
+    serviceClient.getMask({ image, points }, (client, masks) => {
+      console.log(client);
+
+      console.log(masks);
+      resolve(masks);
+    });
+  });
 };
