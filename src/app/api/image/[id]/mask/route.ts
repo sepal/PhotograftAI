@@ -1,4 +1,4 @@
-import { MaskServiceClient } from "@/lib/grpc-services";
+import { getMask } from "@/lib/photograft";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,8 +11,7 @@ export async function POST(req: Request, { params }: Params) {
   const message = await req.json();
   console.log("Requesting mask for image", id, "for points ", message);
 
-  const clientService = new MaskServiceClient();
-  const { client, error } = await clientService.getClient(id, message);
+  const { client, error } = await getMask(id, message);
   if (error) {
     return NextResponse.json({
       status: 500,
@@ -31,6 +30,7 @@ export async function POST(req: Request, { params }: Params) {
 }
 
 export async function GET(req: NextRequest, { params }: Params) {
+  console.log("mask");
   const { id } = params;
   const searchParams = req.nextUrl.searchParams;
   const points = searchParams.get("points");
