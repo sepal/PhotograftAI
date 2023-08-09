@@ -51,7 +51,6 @@ class MaskPredictor:
 
             buffer = io.BytesIO()
             raw_image.save(buffer, format="PNG")
-            raw_image.save(f"mask_{i}.png", format="PNG")
 
             resp.append({
                 "mask": buffer,
