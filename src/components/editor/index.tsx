@@ -109,19 +109,19 @@ export const Canvas = ({ imageId }: Props) => {
   const handleGenerateImage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // if (!promptInput.current?.value) return;
-    // const prompt = promptInput.current?.value;
+    if (!promptInput.current?.value) return;
+    const prompt = promptInput.current?.value;
     if (!mask) return;
     setGenerateState(ProcessingState.Processing);
     const maskResp = await uploadMask(imageId, mask);
 
-    return;
+    console.log(maskResp);
 
     const resp = await fetch(`/api/mask-inpaint`, {
       method: "POST",
       body: JSON.stringify({
         prompt: prompt,
-        maskId: mask,
+        maskId: maskResp["maskId"],
       }),
       headers: {
         "Content-Type": "application/json",

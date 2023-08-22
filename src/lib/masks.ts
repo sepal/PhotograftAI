@@ -1,9 +1,16 @@
 import { Tensor } from "onnxruntime-web";
 import { imageToBlob, maskToImage } from "./imageData";
 
-export async function uploadMask(imageId: string, mask: Tensor) {
+export interface UploadMaskResp {
+  maskId: string;
+}
+
+export async function uploadMask(
+  imageId: string,
+  mask: Tensor
+): Promise<UploadMaskResp> {
   // For the mask, for replicate, we need to generate an image with white being the masked portion.
-  const image = maskToImage(mask, [255, 255, 255, 255], [0, 0, 0, 255]);
+  const image = maskToImage(mask, [0, 0, 0, 255], [255, 255, 255, 255]);
 
   return new Promise((resolve, reject) => {
     image.onload = async () => {
@@ -17,8 +24,7 @@ export async function uploadMask(imageId: string, mask: Tensor) {
         body: formData,
       });
 
-      const resp = await response.json();
-      console.log(resp);
+      const resp = (await response.json()) as UploadMaskResp;
       resolve(resp);
     };
   });

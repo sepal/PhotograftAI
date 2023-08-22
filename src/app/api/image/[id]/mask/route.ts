@@ -29,10 +29,7 @@ export async function POST(req: Request, { params }: Params) {
   });
 
   return NextResponse.json({
-    status: 200,
-    body: {
-      maskId: record.id,
-    },
+    maskId: record.id,
   });
 }
 

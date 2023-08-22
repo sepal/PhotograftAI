@@ -16,36 +16,39 @@ export async function POST(req: NextRequest) {
   const record = await xata.db.Masks.read(maskId, [
     "image.id",
     "image.file.base64Content",
-    "file.base64Content"
+    "file.base64Content",
   ]);
 
   const imageContent = record?.image?.file?.base64Content;
   const maskContent = record?.file?.base64Content;
 
   if (!imageContent || !maskContent) {
-    return NextResponse.json({
-      success: false,
-      message: "Image or mask not found"
-    }, { status: 404 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Image or mask not found",
+      },
+      { status: 404 }
+    );
   }
 
   const imageBuffer = Buffer.from(imageContent, "base64");
   const mask = Buffer.from(maskContent, "base64");
-  // Stable diffusion expects the white black part to be the mask, which is the opposite from what 
-  // we get from SAM. So we invert the mask here.
-  const invertedMask = await sharp(mask).negate().toBuffer();
 
-  const generated = await generateInpaintingMask(prompt, imageBuffer, invertedMask);
+  const generated = await generateInpaintingMask(prompt, imageBuffer, mask);
 
   // We take the prompt and turn it into a filename.
-  const filename = prompt.replace(/\s/g, "-").toLowerCase() + ".png"
+  const filename = prompt.replace(/\s/g, "-").toLowerCase() + ".png";
 
-  const imageId = await createImage(filename, generated.mimeType, generated.imageBuffer);
+  const imageId = await createImage(
+    filename,
+    generated.mimeType,
+    generated.imageBuffer
+  );
   await createOperation(prompt, imageId, [maskId], OperationType.MaskInpaint);
 
   return NextResponse.json({
     success: true,
-    image: imageId
+    image: imageId,
   });
-
 }
