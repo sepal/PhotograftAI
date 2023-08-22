@@ -2,10 +2,6 @@ import { InferenceSession, Tensor, env } from "onnxruntime-web";
 import { useEffect, useState } from "react";
 import { Points, getMask, initSAM, loadNpyTensor, prepModelData } from "../sam";
 
-const MODEL_PATH = "/_next/static/chunks/pages/sam_vit_h_4b8939_quant.onnx";
-
-env.wasm.wasmPaths = "/_next/static/chunks/pages/";
-
 export default function useMask(
   embeddingsPath: string,
   imageWidth: number,
@@ -19,15 +15,17 @@ export default function useMask(
 
   // Initialize the SAM model.
   useEffect(() => {
-    Promise.resolve(initSAM().then((model) => setModel(model)));
+    initSAM()
+      .then((model) => setModel(model))
+      .catch(console.error);
   }, []);
 
   // Load the embeddings tensor file.
   useEffect(() => {
     if (!embeddingsPath) return;
-    Promise.resolve(loadNpyTensor(embeddingsPath)).then((tensor) =>
-      setEmbeddings(tensor)
-    );
+    loadNpyTensor(embeddingsPath)
+      .then((tensor) => setEmbeddings(tensor))
+      .catch(console.error);
   }, [embeddingsPath]);
 
   // Run the predictions.
@@ -36,13 +34,11 @@ export default function useMask(
       return;
     }
 
-    Promise.resolve(
-      getMask(model, embeddings, points, imageWidth, imageHeight, scale).then(
-        (mask) => {
-          setMask(mask);
-        }
-      )
-    );
+    getMask(model, embeddings, points, imageWidth, imageHeight, scale)
+      .then((mask) => {
+        setMask(mask);
+      })
+      .catch(console.error);
   }, [points]);
 
   return [mask, setPoints] as const;

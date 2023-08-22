@@ -1,5 +1,5 @@
 import { InferenceSession, Tensor, env } from "onnxruntime-web";
-import { maskToImage } from "./image";
+import { maskToImage } from "./imageData";
 
 /* @ts-ignore */
 import npyjs from "npyjs";
