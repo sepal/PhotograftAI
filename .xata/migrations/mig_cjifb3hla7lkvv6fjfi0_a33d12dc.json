@@ -1,0 +1,19 @@
+{
+  "id": "mig_cjifb3hla7lkvv6fjfi0",
+  "parentID": "mig_cjifavpla7lkvv6fjff0",
+  "checksum": "1:a33d12dc58318cf6fc9ae7a228e86f0fa41cebc22e86344a244d49d8f0317ea1",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "mask",
+          "type": "link",
+          "link": {
+            "table": "Masks"
+          }
+        },
+        "table": "Sessions"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "mig_cjifal57s7h93hvtims0",
+  "parentID": "mig_cjifac1la7lkvv6fjf0g",
+  "checksum": "1:cccf002babda7d70f53e22a44b1fc4457fc2bdb3d6e377bf54170d7b4dfa14e6",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "state",
+          "type": "string"
+        },
+        "table": "Sessions"
+      }
+    }
+  ]
+}

@@ -16,6 +16,7 @@ const tables = [
     revLinks: [
       { column: "image", table: "Masks" },
       { column: "original", table: "Operations" },
+      { column: "originalImage", table: "Sessions" },
     ],
   },
   {
@@ -26,6 +27,7 @@ const tables = [
       { name: "score", type: "float" },
       { name: "image", type: "link", link: { table: "Images" } },
     ],
+    revLinks: [{ column: "mask", table: "Sessions" }],
   },
   {
     name: "Operations",
@@ -34,6 +36,14 @@ const tables = [
       { name: "masks", type: "text", notNull: true, defaultValue: "[]" },
       { name: "type", type: "string" },
       { name: "prompt", type: "string" },
+    ],
+  },
+  {
+    name: "Sessions",
+    columns: [
+      { name: "state", type: "string" },
+      { name: "originalImage", type: "link", link: { table: "Images" } },
+      { name: "mask", type: "link", link: { table: "Masks" } },
     ],
   },
 ] as const;
@@ -50,10 +60,14 @@ export type MasksRecord = Masks & XataRecord;
 export type Operations = InferredTypes["Operations"];
 export type OperationsRecord = Operations & XataRecord;
 
+export type Sessions = InferredTypes["Sessions"];
+export type SessionsRecord = Sessions & XataRecord;
+
 export type DatabaseSchema = {
   Images: ImagesRecord;
   Masks: MasksRecord;
   Operations: OperationsRecord;
+  Sessions: SessionsRecord;
 };
 
 const DatabaseClient = buildClient();

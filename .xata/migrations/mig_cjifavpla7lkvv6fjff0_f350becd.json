@@ -1,0 +1,19 @@
+{
+  "id": "mig_cjifavpla7lkvv6fjff0",
+  "parentID": "mig_cjifat0eokes0ts3i4qg",
+  "checksum": "1:f350becd61e96d0d77777e737de3188427ec9e40d1f51288e3f61252a67beda8",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "originalImage",
+          "type": "link",
+          "link": {
+            "table": "Images"
+          }
+        },
+        "table": "Sessions"
+      }
+    }
+  ]
+}
