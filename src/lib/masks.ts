@@ -10,7 +10,7 @@ export async function uploadMask(
   mask: Tensor
 ): Promise<UploadMaskResp> {
   // For the mask, for replicate, we need to generate an image with white being the masked portion.
-  const image = maskToImage(mask, [0, 0, 0, 255], [255, 255, 255, 255]);
+  const image = maskToImage(mask, [255, 255, 255, 255], [0, 0, 0, 255]);
 
   return new Promise((resolve, reject) => {
     image.onload = async () => {

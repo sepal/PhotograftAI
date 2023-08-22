@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import { getReplicateClient } from "./replicate";
 import { getAppDomain } from "./url";
-import { getXataClient } from "./xata";
+import { ImagesRecord, getXataClient } from "./xata";
 
 export enum OperationType {
   MaskInpaint = "mask-inpaint",
@@ -20,6 +20,29 @@ export async function createOperation(
     masks: JSON.stringify(maskIds),
     prompt,
     type: operationType.toString(),
+  });
+}
+
+export async function requestEmbeddings(imageId: string) {
+  const xata = getXataClient();
+  const replicate = getReplicateClient();
+
+  const fileRecord = await xata.db.Images.read(imageId, [
+    "file.mediaType",
+    "file.signedUrl",
+  ]);
+  const webHookUrl = `${getAppDomain()}/api/image/${imageId}/embedding`;
+  const imageUrl = fileRecord!.file!.signedUrl;
+
+  console.log("Creating embeddings");
+  await replicate.predictions.create({
+    version: "6a12283e7c189130111be096aa06f08ea95c3df2df71fb83c5fd80ba69d1649e",
+    input: {
+      image: imageUrl,
+      as_npy: true,
+    },
+    webhook: webHookUrl,
+    webhook_events_filter: ["completed"],
   });
 }
 
@@ -45,24 +68,7 @@ export async function createImage(
     },
   });
 
-  const fileRecord = await xata.db.Images.read(record.id, [
-    "file.mediaType",
-    "file.signedUrl",
-  ]);
-
-  const webHookUrl = `${getAppDomain()}/api/image/${record.id}/embedding`;
-  const imageUrl = fileRecord!.file!.signedUrl;
-
-  console.log("Creating embeddings");
-  await replicate.predictions.create({
-    version: "6a12283e7c189130111be096aa06f08ea95c3df2df71fb83c5fd80ba69d1649e",
-    input: {
-      image: imageUrl,
-      as_npy: true,
-    },
-    webhook: webHookUrl,
-    webhook_events_filter: ["completed"],
-  });
+  await requestEmbeddings(record.id);
 
   return record.id;
 }
