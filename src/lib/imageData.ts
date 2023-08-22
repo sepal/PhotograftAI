@@ -32,6 +32,30 @@ function imageDataToImage(data: ImageData): HTMLImageElement {
   return image;
 }
 
+export function imageToBlob(image: HTMLImageElement): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      reject(new Error("Failed to get canvas context"));
+      return;
+    }
+
+    ctx.drawImage(image, 0, 0);
+
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("Failed to convert image to blob"));
+        return;
+      }
+      resolve(blob);
+    });
+  });
+}
+
 export function maskToImage(
   input: any,
   width: number,
