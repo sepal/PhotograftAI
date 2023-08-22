@@ -1,8 +1,5 @@
 import { InferenceSession, Tensor, env } from "onnxruntime-web";
 import { useEffect, useState } from "react";
-/* @ts-ignore */
-import npyjs from "npyjs";
-import { maskToImage } from "../image";
 import { Points, getMask, initSAM, loadNpyTensor, prepModelData } from "../sam";
 
 const MODEL_PATH = "/_next/static/chunks/pages/sam_vit_h_4b8939_quant.onnx";

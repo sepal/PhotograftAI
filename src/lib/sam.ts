@@ -1,6 +1,8 @@
 import { InferenceSession, Tensor, env } from "onnxruntime-web";
-import npyjs from "npyjs";
 import { maskToImage } from "./image";
+
+/* @ts-ignore */
+import npyjs from "npyjs";
 
 const MODEL_PATH = "/_next/static/chunks/pages/sam_vit_h_4b8939_quant.onnx";
 

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
 import { useRouter } from "next/navigation";
-import HorizontalSlider from "../formElements/Slider";
 import useMask from "@/lib/hooks/useMask";
 
 interface Props {
