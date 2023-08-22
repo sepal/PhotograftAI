@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
 import { useRouter } from "next/navigation";
 import HorizontalSlider from "../formElements/Slider";
+import useMask from "@/lib/hooks/useMask";
 
 interface Props {
   imageId: string;
@@ -22,33 +23,23 @@ type MaskColor = [number, number, number, number];
 export const Canvas = ({ imageId }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const [point, setPoint] = useState<Point>([75, 75]);
-  const [masks, setMasks] = useState<Mask[]>([]);
-  const [mask, setMask] = useState<string | null>(null);
+
+  const [mask, setPoints] = useMask(
+    `/api/image/${imageId}/embeddings`,
+    512,
+    512,
+    1024 / 512
+  );
+
   const [generateState, setGenerateState] = useState<ProcessingState>(
     ProcessingState.Idle
   );
-  
+
   const promptInput = useRef<HTMLTextAreaElement>(null);
 
   const router = useRouter();
 
   const color: MaskColor = [0, 120, 1000, 0.5];
-
-  useEffect(() => {
-    const fetchMasks = async () => {
-      const points = JSON.stringify([[point]]);
-      const resp = await fetch(`/api/image/${imageId}/mask?point=${points}`);
-      const data = await resp.json();
-
-      const newMasks = data["body"] as Mask[];
-
-      if (newMasks.length === 0) return;
-      setMask(newMasks[0].id);
-      setMasks(newMasks);
-    };
-    fetchMasks();
-  }, [point]);
 
   useEffect(() => {
     const img = new Image();
@@ -72,8 +63,6 @@ export const Canvas = ({ imageId }: Props) => {
     offScreenCanvas.height = canvasHeight;
     const offScreenCtx = offScreenCanvas.getContext("2d");
 
-    const maskUrl = masks?.find((m) => m.id === mask)?.imageUrl;
-
     canvasCtxRef.current!.clearRect(
       0,
       0,
@@ -84,39 +73,19 @@ export const Canvas = ({ imageId }: Props) => {
     img.onload = () => {
       if (canvasCtxRef.current === null) return;
 
-      if (!maskUrl) {
+      if (!mask) {
         canvasCtxRef.current.drawImage(img, 0, 0, 512, 512);
         return;
       }
 
-      const maskImage = new Image();
-      maskImage.src = maskUrl;
-      console.log(maskUrl);
-
-      maskImage.onload = () => {
+      mask.onload = () => {
         if (canvasCtxRef.current === null) return;
-        if (!offScreenCtx) return;
-        offScreenCtx.drawImage(maskImage, 0, 0, 512, 512);
-        const maskData = offScreenCtx.getImageData(0, 0, 512, 512);
-
-        let d = maskData.data;
-
-        for (let i = 0; i < d.length; i += 4) {
-          // Calculate the brightness of the pixel
-          let brightness = (d[i] + d[i + 1] + d[i + 2]) / 3 / 255;
-
-          d[i] = color[0]; // Red channel
-          d[i + 1] = color[1]; // Green channel
-          d[i + 2] = color[2]; // Blue channel
-          d[i + 3] = color[3] * brightness * 255; // Alpha channel
-        }
-
-        canvasCtxRef.current.putImageData(maskData, 0, 0);
+        canvasCtxRef.current.drawImage(mask, 0, 0, 512, 512);
         canvasCtxRef.current.globalCompositeOperation = "destination-over";
         canvasCtxRef.current.drawImage(img, 0, 0, 512, 512);
       };
     };
-  }, [masks, mask]);
+  }, [mask]);
 
   const handleClick = async (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
@@ -131,18 +100,7 @@ export const Canvas = ({ imageId }: Props) => {
     const y = (e.clientY - rect.top) * heightRatio;
 
     const point: Point = [x, y];
-    console.log([[point]]);
-    const resp = await fetch(`/api/image/${imageId}/mask`, {
-      method: "POST",
-      body: JSON.stringify([[point]]),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    console.log(await resp.json());
-
-    setPoint(point);
+    setPoints([point]);
   };
 
   const handleGenerateImage = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -190,7 +148,7 @@ export const Canvas = ({ imageId }: Props) => {
   };
 
   const handleSliderChange = (value: any) => {
-    setMask(masks[value].id);
+    // setMask(masks[value].id);
   };
 
   return (
@@ -205,15 +163,6 @@ export const Canvas = ({ imageId }: Props) => {
         />
       </div>
       <form className="flex flex-col my-4" onSubmit={handleGenerateImage}>
-        {masks.length > 0 && (
-          <HorizontalSlider
-            className="h-8 w-full my-4"
-            max={masks.length - 1}
-            marks
-            onChange={handleSliderChange}
-          />
-        )}
-
         <textarea
           className="border my-2 p-1 border-slate-500 rounded"
           placeholder="A golden hour sky..."
