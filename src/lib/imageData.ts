@@ -1,11 +1,14 @@
+import { Tensor } from "onnxruntime-web";
+
 // RGBA Color type.
 export type RGBA = [number, number, number, number];
 
 function maskDataToImage(
-  data: number[],
+  data: any,
   width: number,
   height: number,
-  color: RGBA
+  color: RGBA,
+  background: RGBA
 ) {
   const image = new Uint8ClampedArray(4 * width * height).fill(0);
 
@@ -15,6 +18,11 @@ function maskDataToImage(
       image[4 * i + 1] = color[1];
       image[4 * i + 2] = color[2];
       image[4 * i + 3] = color[3];
+    } else {
+      image[4 * i + 0] = background[0];
+      image[4 * i + 1] = background[1];
+      image[4 * i + 2] = background[2];
+      image[4 * i + 3] = background[3];
     }
   }
 
@@ -57,10 +65,12 @@ export function imageToBlob(image: HTMLImageElement): Promise<Blob> {
 }
 
 export function maskToImage(
-  input: any,
-  width: number,
-  height: number
+  input: Tensor,
+  color: RGBA,
+  background: RGBA = [0, 0, 0, 0]
 ): HTMLImageElement {
-  const color: RGBA = [0, 114, 189, 120];
-  return imageDataToImage(maskDataToImage(input, width, height, color));
+  // const color: RGBA = [0, 114, 189, 120];
+  return imageDataToImage(
+    maskDataToImage(input.data, input.dims[2], input.dims[3], color, background)
+  );
 }

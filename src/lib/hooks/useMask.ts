@@ -11,7 +11,7 @@ export default function useMask(
   const [model, setModel] = useState<InferenceSession | null>(null);
   const [embeddings, setEmbeddings] = useState<Tensor | null>(null);
   const [points, setPoints] = useState<Points>([]);
-  const [mask, setMask] = useState<HTMLImageElement | null>(null);
+  const [mask, setMask] = useState<Tensor | null>(null);
 
   // Initialize the SAM model.
   useEffect(() => {

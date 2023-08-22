@@ -5,6 +5,7 @@ import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
 import { useRouter } from "next/navigation";
 import useMask from "@/lib/hooks/useMask";
 import { uploadMask } from "@/lib/masks";
+import { maskToImage } from "@/lib/imageData";
 
 interface Props {
   imageId: string;
@@ -78,9 +79,11 @@ export const Canvas = ({ imageId }: Props) => {
         return;
       }
 
-      mask.onload = () => {
+      const maskImage = maskToImage(mask, [0, 114, 189, 120]);
+
+      maskImage.onload = () => {
         if (canvasCtxRef.current === null) return;
-        canvasCtxRef.current.drawImage(mask, 0, 0, 512, 512);
+        canvasCtxRef.current.drawImage(maskImage, 0, 0, 512, 512);
         canvasCtxRef.current.globalCompositeOperation = "destination-over";
         canvasCtxRef.current.drawImage(img, 0, 0, 512, 512);
       };

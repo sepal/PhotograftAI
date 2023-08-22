@@ -45,8 +45,6 @@ export function prepModelData(
   pointCoords[2 * pointsLen + 1] = 0.0;
   pointLabels[pointsLen] = -1.0;
 
-  console.log(pointLabels);
-
   pointCoordsTensor = new Tensor("float32", pointCoords, [
     1,
     points.length + 1,
@@ -99,6 +97,5 @@ export async function getMask(
   const result = await model.run(modelData);
   const output = result[model.outputNames[0]];
 
-  const image = maskToImage(output.data, output.dims[2], output.dims[3]);
-  return image;
+  return output;
 }
