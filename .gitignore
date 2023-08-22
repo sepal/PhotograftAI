@@ -39,5 +39,10 @@ next-env.d.ts
 .venv
 __pycache__/
 
+# Ignore any models.
 photograft_service/models/sam/*.json
 photograft_service/models/sam/*.bin
+
+models/*.onnx
+models/*.bin
+models/*.json
