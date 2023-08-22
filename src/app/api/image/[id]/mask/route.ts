@@ -1,4 +1,3 @@
-import { MaskServiceClient } from "@/lib/grpc-services";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,29 +7,34 @@ type Params = {
 
 export async function POST(req: Request, { params }: Params) {
   const { id } = params;
-  const message = await req.json();
-  console.log("Requesting mask for image", id, "for points ", message);
 
-  const clientService = new MaskServiceClient();
-  const { client, error } = await clientService.getClient(id, message);
-  if (error) {
-    return NextResponse.json({
-      status: 500,
-      body: { error: error.details },
-    });
-  }
+  const data = await req.formData();
 
-  console.log(client);
+  const blob = data.get("image") as Blob;
+
+  const xata = getXataClient();
+  const imageData = await blob
+    .arrayBuffer()
+    .then((buffer) => Buffer.from(buffer));
+
+  console.log();
+
+  const record = await xata.db.Masks.create({
+    image: id,
+    file: {
+      name: "mask.png",
+      base64Content: imageData.toString("base64"),
+      mediaType: "image/png",
+    },
+  });
 
   return NextResponse.json({
-    status: 200,
-    body: {
-      maskIds: client!.masks,
-    },
+    maskId: record.id,
   });
 }
 
 export async function GET(req: NextRequest, { params }: Params) {
+  console.log("mask");
   const { id } = params;
   const searchParams = req.nextUrl.searchParams;
   const points = searchParams.get("points");
