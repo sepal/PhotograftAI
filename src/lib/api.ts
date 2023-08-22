@@ -26,7 +26,7 @@ export async function createOperation(
 export async function createImage(
   filename: string,
   mimeType: string,
-  imageData: Buffer,
+  imageData: Buffer
 ) {
   console.log("Creating image");
   const xata = getXataClient();
@@ -55,9 +55,10 @@ export async function createImage(
 
   console.log("Creating embeddings");
   await replicate.predictions.create({
-    version: "6169e3d14e9d16d2efd9caf122c94cc4aa916ccef7ae2f85afc930a874beffd9",
+    version: "6a12283e7c189130111be096aa06f08ea95c3df2df71fb83c5fd80ba69d1649e",
     input: {
       image: imageUrl,
+      as_npy: true,
     },
     webhook: webHookUrl,
     webhook_events_filter: ["completed"],
