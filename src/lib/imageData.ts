@@ -68,9 +68,13 @@ export function maskToImage(
   input: Tensor,
   color: RGBA,
   background: RGBA = [0, 0, 0, 0]
-): HTMLImageElement {
-  // const color: RGBA = [0, 114, 189, 120];
-  return imageDataToImage(
+): Promise<HTMLImageElement> {
+  const img = imageDataToImage(
     maskDataToImage(input.data, input.dims[2], input.dims[3], color, background)
   );
+
+  return new Promise((resolve, reject) => {
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+  });
 }

@@ -9,6 +9,7 @@ import { Point } from "@/lib/sam";
 import EditorCanvas from "./EditorCanvas";
 import GenerateImageForm from "../form/GenerateImageFrom";
 import { getPhotograftClient } from "@/lib/photograftApi";
+import { loadImage } from "@/lib/graphics/images";
 
 interface Props {
   imageId: string;
@@ -20,6 +21,7 @@ export const Editor = ({ imageId }: Props) => {
 
   const client = getPhotograftClient();
 
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [mask, setPoints] = useMask(
     `/api/image/${imageId}/embeddings`,
     512,
@@ -33,45 +35,33 @@ export const Editor = ({ imageId }: Props) => {
 
   const router = useRouter();
 
+  const drawPreview = async (canvas: CanvasRenderingContext2D) => {
+    if (!image) return;
+    canvasCtxRef.current!.drawImage(image, 0, 0, 512, 512);
+
+    if (!mask) {
+      return;
+    }
+    const maskImage = await maskToImage(mask, [0, 114, 189, 120]);
+    canvasCtxRef.current!.drawImage(maskImage, 0, 0, 512, 512);
+  };
+
   useEffect(() => {
-    const img = new Image();
-    img.src = `/api/image/${imageId}`;
+    const loadOrgImage = async () => {
+      const img = await loadImage(`/api/image/${imageId}`);
+      setImage(img);
+    };
 
+    loadOrgImage();
+  }, []);
+
+  useEffect(() => {
     if (!canvasRef.current) return;
-
-    // Initialize
     canvasCtxRef.current = canvasRef.current.getContext("2d");
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) return;
-
-    canvasCtxRef.current!.clearRect(
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
-
-    img.onload = () => {
-      if (canvasCtxRef.current === null) return;
-
-      if (!mask) {
-        canvasCtxRef.current.drawImage(img, 0, 0, 512, 512);
-        return;
-      }
-
-      const maskImage = maskToImage(mask, [0, 114, 189, 120]);
-
-      maskImage.onload = () => {
-        if (canvasCtxRef.current === null) return;
-        canvasCtxRef.current.drawImage(maskImage, 0, 0, 512, 512);
-        canvasCtxRef.current.globalCompositeOperation = "destination-over";
-        canvasCtxRef.current.drawImage(img, 0, 0, 512, 512);
-      };
-    };
-  }, [mask]);
+    if (!canvasCtxRef.current) return;
+    drawPreview(canvasCtxRef.current);
+  }, [image, mask]);
 
   const handlePoint = async (point: Point) => {
     setPoints([point]);
@@ -83,7 +73,6 @@ export const Editor = ({ imageId }: Props) => {
     const newImageId = await client.maskedInPainting(imageId, prompt, mask);
     if (!newImageId) {
       console.error("Could not generate image");
-
       return;
     }
 
