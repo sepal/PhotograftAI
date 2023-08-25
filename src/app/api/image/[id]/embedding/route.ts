@@ -7,6 +7,9 @@ type Params = {
   params: { id: string };
 };
 
+/**
+ * Webhook for replicate to push the embeddings.
+ */
 export async function POST(req: Request, { params }: Params) {
   const { id } = params;
   console.log("Receiving embeddings for", id);
@@ -28,8 +31,6 @@ export async function POST(req: Request, { params }: Params) {
 
   const { output } = resp;
 
-  const body = req.body;
-
   const fileResp = await fetch(output);
 
   const file = await fileResp
@@ -50,41 +51,6 @@ export async function POST(req: Request, { params }: Params) {
       mediaType: "application/zip",
     },
   });
-
-  return NextResponse.json({
-    success: true,
-  });
-}
-
-export async function GET(req: Request, { params }: Params) {
-  const { id } = params;
-  console.log(id);
-  console.log("Checking embeddings for", id);
-
-  const xata = getXataClient();
-  const record = await xata.db.Images.read(id, ["embeddings"]);
-  console.log(record);
-  if (!record) {
-    return NextResponse.json(
-      {
-        error: "Image not found",
-      },
-      {
-        status: 404,
-      }
-    );
-  }
-
-  if (!record.embeddings) {
-    return NextResponse.json(
-      {
-        error: "No embeddings found",
-      },
-      {
-        status: 404,
-      }
-    );
-  }
 
   return NextResponse.json({
     success: true,

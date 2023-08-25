@@ -1,6 +1,5 @@
-import { createImage } from "@/lib/api";
+import { createImage, requestEmbeddings } from "@/lib/api/images";
 import { getReplicateClient } from "@/lib/replicate";
-import { getAppDomain } from "@/lib/url";
 import { getXataClient } from "@/lib/xata";
 import { NextResponse } from "next/server";
 
@@ -23,6 +22,7 @@ export async function POST(req: Request) {
         .then((buffer) => Buffer.from(buffer));
 
       const imageId = await createImage(filename, mimeType, imageData);
+      await requestEmbeddings(imageId);
 
       images.push(imageId);
     }

@@ -1,6 +1,4 @@
-import { requestEmbeddings } from "@/lib/api";
-import { getReplicateClient } from "@/lib/replicate";
-import { getAppDomain } from "@/lib/url";
+import { requestEmbeddings } from "@/lib/api/images";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";

@@ -4,6 +4,7 @@ import { FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageDrop } from "../formElements/ImageDrop";
 import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
+import { getPhotograftClient } from "@/lib/photograftApi";
 
 export const UploadImage = () => {
   const router = useRouter();
@@ -40,10 +41,9 @@ export const UploadImage = () => {
     setState(ProcessingState.Done);
 
     const checkEmbeddings = async () => {
-      const resp = await fetch(`/api/image/${id}/embedding`);
-      const data = await resp.json();
-      console.log(data);
-      if (data.success === true) {
+      const photograft = getPhotograftClient();
+      const hasImage = await photograft.hasEmbeddings(id);
+      if (hasImage === true) {
         setState(ProcessingState.Done);
         router.push(`/editor/${id}`);
         return;
