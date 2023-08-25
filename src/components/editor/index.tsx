@@ -8,6 +8,7 @@ import { uploadMask } from "@/lib/masks";
 import { maskToImage } from "@/lib/imageData";
 import { Point } from "@/lib/sam";
 import Canvas from "./Canvas";
+import GenerateImageForm from "../form/GenerateImageFrom";
 
 interface Props {
   imageId: string;
@@ -72,27 +73,11 @@ export const Editor = ({ imageId }: Props) => {
     };
   }, [mask]);
 
-  const handleClick = async (
-    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-  ) => {
-    if (!canvasRef.current) return;
-    const rect = canvasRef.current?.getBoundingClientRect();
-    const widthRation = canvasRef.current.width / canvasRef.current.clientWidth;
-    const heightRatio =
-      canvasRef.current.height / canvasRef.current.clientHeight;
-    if (!rect) return;
-    const x = (e.clientX - rect.left) * widthRation;
-    const y = (e.clientY - rect.top) * heightRatio;
-
-    const point: Point = [x, y];
+  const handlePoint = async (point: Point) => {
     setPoints([point]);
   };
 
-  const handleGenerateImage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!promptInput.current?.value) return;
-    const prompt = promptInput.current?.value;
+  const handleGenerateImage = async (prompt: string) => {
     if (!mask) return;
     setGenerateState(ProcessingState.Processing);
     const maskResp = await uploadMask(imageId, mask);
@@ -160,16 +145,9 @@ export const Editor = ({ imageId }: Props) => {
   return (
     <div className="flex flex-col justify-between items-stretch max-w-lg m-auto">
       <div className="grow w-full">
-        <Canvas canvasRef={canvasRef} onClick={handleClick} />
+        <Canvas ref={canvasRef} onPointClick={handlePoint} />
       </div>
-      <form className="flex flex-col my-4" onSubmit={handleGenerateImage}>
-        <textarea
-          className="border my-2 p-1 border-slate-500 rounded"
-          placeholder="A golden hour sky..."
-          ref={promptInput}
-        />
-        <ProcessButton state={generateState}>Generate</ProcessButton>
-      </form>
+      <GenerateImageForm onSubmit={handleGenerateImage} state={generateState} />
     </div>
   );
 };
