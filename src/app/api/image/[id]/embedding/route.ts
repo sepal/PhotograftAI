@@ -1,3 +1,4 @@
+import { createErrorMessage } from "@/lib/api/errors";
 import { getReplicateClient } from "@/lib/replicate";
 import { getXataClient } from "@/lib/xata";
 import { NextResponse } from "next/server";
@@ -17,16 +18,8 @@ export async function POST(req: Request, { params }: Params) {
   const resp = await req.json();
 
   if (resp.status != "succeeded") {
-    console.log("Failed prediction");
-    return NextResponse.json(
-      {
-        success: false,
-        error: resp.error,
-      },
-      {
-        status: 500,
-      }
-    );
+    console.error("Failed prediction");
+    return createErrorMessage("Bad request", 400);
   }
 
   const { output } = resp;
@@ -43,7 +36,6 @@ export async function POST(req: Request, { params }: Params) {
   let parsedPath = path.parse(record!.file!.name!);
   let newFileName = `${parsedPath.name}.zip`;
 
-  console.log(`"${id}"`);
   await xata.db.Images.update(id, {
     embeddings: {
       base64Content: file,
@@ -52,7 +44,5 @@ export async function POST(req: Request, { params }: Params) {
     },
   });
 
-  return NextResponse.json({
-    success: true,
-  });
+  return new Response(null);
 }

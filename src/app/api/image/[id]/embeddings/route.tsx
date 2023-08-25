@@ -6,9 +6,12 @@ type Params = {
   params: { id: string };
 };
 
+/**
+ * Endpoint to receive an image's embeddings.
+ */
 export async function GET(req: Request, { params }: Params) {
   const { id } = params;
-  console.log("Receiving embeddings for", id);
+  console.log("Retreiving embeddings for", id);
 
   const xata = getXataClient();
 

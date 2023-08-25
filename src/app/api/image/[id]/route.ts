@@ -1,3 +1,4 @@
+import { createErrorMessage } from "@/lib/api/errors";
 import { requestEmbeddings } from "@/lib/api/images";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,7 +12,7 @@ export async function GET(req: Request, { params }: Params) {
   const { id } = params;
 
   if (!id) {
-    return new NextResponse(null, { status: 400, statusText: "Bad Request" });
+    return createErrorMessage("Bad request, id missing", 400);
   }
 
   const xata = getXataClient();
@@ -23,13 +24,13 @@ export async function GET(req: Request, { params }: Params) {
   ]);
 
   if (!record?.file?.signedUrl) {
-    return new NextResponse(null, { status: 404, statusText: "Not Found" });
+    return createErrorMessage("Image not found", 404);
   }
 
   const response = await fetch(record.file.signedUrl);
 
   if (!response.body) {
-    return new NextResponse(null, { status: 404, statusText: "Not Found" });
+    return createErrorMessage("Image file not found", 404);
   }
 
   return new NextResponse(response.body);
@@ -63,12 +64,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     console.error(
       "Could not find image record " + id + " for masked inpainting."
     );
-    return NextResponse.json(
-      {
-        success: false,
-      },
-      { status: 500 }
-    );
+    return createErrorMessage("Image not found", 404);
   }
 
   const fileResp = await fetch(output);

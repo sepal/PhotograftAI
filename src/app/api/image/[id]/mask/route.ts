@@ -17,8 +17,6 @@ export async function POST(req: Request, { params }: Params) {
     .arrayBuffer()
     .then((buffer) => Buffer.from(buffer));
 
-  console.log();
-
   const record = await xata.db.Masks.create({
     image: id,
     file: {
@@ -38,8 +36,6 @@ export async function GET(req: NextRequest, { params }: Params) {
   const { id } = params;
   const searchParams = req.nextUrl.searchParams;
   const points = searchParams.get("points");
-  const score = searchParams.get("score");
-  const blur = searchParams.get("blur") || 0;
 
   const xata = getXataClient();
 

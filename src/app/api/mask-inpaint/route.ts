@@ -13,11 +13,10 @@ export async function POST(req: NextRequest) {
 
   const xata = getXataClient();
 
-  // const filename = prompt.replace(/\s/g, "-").toLowerCase() + ".png";
   const record = await xata.db.Images.create({});
 
   const webHookUrl = `${getAppDomain()}/api/image/${record.id}`;
-  const resp = await inpaint(prompt, maskId, webHookUrl);
+  await inpaint(prompt, maskId, webHookUrl);
 
   return NextResponse.json({
     success: true,

@@ -1,3 +1,4 @@
+import { createErrorMessage } from "@/lib/api/errors";
 import { getXataClient } from "@/lib/xata";
 import { NextResponse } from "next/server";
 
@@ -9,35 +10,36 @@ export async function GET(req: Request, { params }: Params) {
   const { maskId } = params;
 
   if (!maskId) {
-    return new NextResponse(null, { status: 400, statusText: "Bad Request" });
+    return createErrorMessage("Bad request, mask id missing", 400);
   }
 
   const xata = getXataClient();
 
+  // TODO: remove ts ignore once fixed in signedUrl bug fixed in xata.
+  // @ts-ignore
   const record = await xata.db.Masks.read(maskId, [
     "file.name",
     "file.signedUrl",
     "file.mediaType",
   ]);
 
-
   if (!record?.file?.signedUrl) {
-    return new NextResponse(null, { status: 404, statusText: "Not Found" });
+    return createErrorMessage("Image not found", 404);
   }
 
   const { signedUrl } = record.file.transform({
-    blur: 1.5
+    blur: 1.5,
   });
 
   if (!signedUrl) {
-    return new NextResponse(null, { status: 404, statusText: "Not Found" });
+    return createErrorMessage("File not found", 404);
   }
 
   const response = await fetch(signedUrl);
 
   if (!response.body) {
-    return new NextResponse(null, { status: 404, statusText: "Not Found" });
+    return createErrorMessage("File not found", 404);
   }
 
-  return new NextResponse(response.body)
+  return new NextResponse(response.body);
 }
