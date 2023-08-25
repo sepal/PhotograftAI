@@ -6,20 +6,11 @@ import { useRouter } from "next/navigation";
 import useMask from "@/lib/hooks/useMask";
 import { uploadMask } from "@/lib/masks";
 import { maskToImage } from "@/lib/imageData";
+import { Point } from "@/lib/sam";
 
 interface Props {
   imageId: string;
 }
-
-interface Mask {
-  id: string;
-  score: number;
-  imageUrl: string;
-}
-
-type Point = [number, number];
-
-type MaskColor = [number, number, number, number];
 
 export const Canvas = ({ imageId }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -40,8 +31,6 @@ export const Canvas = ({ imageId }: Props) => {
 
   const router = useRouter();
 
-  const color: MaskColor = [0, 120, 1000, 0.5];
-
   useEffect(() => {
     const img = new Image();
     img.src = `/api/image/${imageId}`;
@@ -55,14 +44,6 @@ export const Canvas = ({ imageId }: Props) => {
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return;
-
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
-
-    const offScreenCanvas = document.createElement("canvas");
-    offScreenCanvas.width = canvasWidth;
-    offScreenCanvas.height = canvasHeight;
-    const offScreenCtx = offScreenCanvas.getContext("2d");
 
     canvasCtxRef.current!.clearRect(
       0,
@@ -130,18 +111,22 @@ export const Canvas = ({ imageId }: Props) => {
 
     const data = await resp.json();
 
-    if (data.success != true || !data.image) {
+    if (data.success != true || !data.imageId) {
       console.log(data);
       return;
     }
 
-    const newImageId = data.image;
+    const newImageId = data.imageId;
 
     const checkEmbeddings = async () => {
+      console.log("Checking if embeddings were generated");
       const resp = await fetch(`/api/image/${newImageId}/embedding`);
       const data = await resp.json();
       console.log(data);
       if (data.success === true) {
+        console.log(
+          "Embeddings generated, redirecting to editor with new image id"
+        );
         router.push(`/editor/${newImageId}`);
         return;
       } else {
@@ -149,13 +134,26 @@ export const Canvas = ({ imageId }: Props) => {
       }
     };
 
-    checkEmbeddings();
+    const checkImageGenerated = async () => {
+      console.log("Checking if image was generated");
+      const resp = await fetch(`/api/image/${newImageId}/hasImage`, {
+        method: "POST",
+      });
+      const data = await resp.json();
+      console.log(data);
+
+      if (data.hasImage == true) {
+        console.log("Image generated");
+        checkEmbeddings();
+        return;
+      } else {
+        setTimeout(checkImageGenerated, 1000);
+      }
+    };
+
+    checkImageGenerated();
 
     console.log(data);
-  };
-
-  const handleSliderChange = (value: any) => {
-    // setMask(masks[value].id);
   };
 
   return (
