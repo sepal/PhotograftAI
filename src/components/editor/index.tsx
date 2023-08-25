@@ -7,7 +7,7 @@ import useMask from "@/lib/hooks/useMask";
 import { uploadMask } from "@/lib/masks";
 import { maskToImage } from "@/lib/imageData";
 import { Point } from "@/lib/sam";
-import Canvas from "./Canvas";
+import EditorCanvas from "./EditorCanvas";
 import GenerateImageForm from "../form/GenerateImageFrom";
 
 interface Props {
@@ -145,7 +145,7 @@ export const Editor = ({ imageId }: Props) => {
   return (
     <div className="flex flex-col justify-between items-stretch max-w-lg m-auto">
       <div className="grow w-full">
-        <Canvas ref={canvasRef} onPointClick={handlePoint} />
+        <EditorCanvas ref={canvasRef} onPointClick={handlePoint} />
       </div>
       <GenerateImageForm onSubmit={handleGenerateImage} state={generateState} />
     </div>

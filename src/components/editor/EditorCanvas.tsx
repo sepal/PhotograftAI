@@ -5,7 +5,7 @@ interface CanvasProps {
   onPointClick?: (point: Point) => void;
 }
 
-const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
+const EditorCanvas = forwardRef<HTMLCanvasElement, CanvasProps>(
   ({ onPointClick: onSetPoint = () => {} }: CanvasProps, ref) => {
     const handleClick = (
       e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
@@ -34,4 +34,4 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
   }
 );
 
-export default Canvas;
+export default EditorCanvas;
