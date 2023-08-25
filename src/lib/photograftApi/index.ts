@@ -20,33 +20,29 @@ export class PhotograftClient extends BaseClient {
     super(host);
   }
 
-  uploadMask(imageId: string, mask: Tensor): Promise<UploadMaskResp> {
+  async uploadMask(imageId: string, mask: Tensor) {
     // For the mask, for replicate, we need to generate an image with white being the masked portion.
-    const image = maskToImage(mask, [255, 255, 255, 255], [0, 0, 0, 255]);
+    const image = await maskToImage(mask, [255, 255, 255, 255], [0, 0, 0, 255]);
 
-    return new Promise((resolve, reject) => {
-      image.onload = async () => {
-        const blob = await imageToBlob(image);
+    const blob = await imageToBlob(image);
 
-        const formData = new FormData();
-        formData.append("image", blob, "mask.png");
-        console.log(formData);
-        const resp = await this.post<UploadMaskResp>(
-          `/api/image/${imageId}/mask`,
-          formData
-        );
+    const formData = new FormData();
+    formData.append("image", blob, "mask.png");
+    console.log(formData);
+    const resp = await this.post<UploadMaskResp>(
+      `/api/image/${imageId}/mask`,
+      formData
+    );
 
-        resolve(resp);
-      };
-    });
+    return resp.maskId;
   }
 
   async maskedInPainting(imageId: string, prompt: string, mask: Tensor) {
-    const maskResp = await this.uploadMask(imageId, mask);
+    const maskId = await this.uploadMask(imageId, mask);
 
     const resp = await this.post<MaskedInPaintingResp>(`/api/mask-inpaint`, {
       prompt: prompt,
-      maskId: maskResp["maskId"],
+      maskId: maskId,
     });
 
     return resp.imageId;
