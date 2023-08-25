@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { ProcessButton, ProcessingState } from "../formElements/ProcessButton";
 import { useRouter } from "next/navigation";
 import useMask from "@/lib/hooks/useMask";
-import { uploadMask } from "@/lib/masks";
 import { maskToImage } from "@/lib/imageData";
 import { Point } from "@/lib/sam";
 import EditorCanvas from "./EditorCanvas";
 import GenerateImageForm from "../form/GenerateImageFrom";
+import { getPhotograftClient } from "@/lib/photograftApi";
 
 interface Props {
   imageId: string;
@@ -17,6 +17,8 @@ interface Props {
 export const Editor = ({ imageId }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+
+  const client = getPhotograftClient();
 
   const [mask, setPoints] = useMask(
     `/api/image/${imageId}/embeddings`,
@@ -28,8 +30,6 @@ export const Editor = ({ imageId }: Props) => {
   const [generateState, setGenerateState] = useState<ProcessingState>(
     ProcessingState.Idle
   );
-
-  const promptInput = useRef<HTMLTextAreaElement>(null);
 
   const router = useRouter();
 
@@ -80,36 +80,18 @@ export const Editor = ({ imageId }: Props) => {
   const handleGenerateImage = async (prompt: string) => {
     if (!mask) return;
     setGenerateState(ProcessingState.Processing);
-    const maskResp = await uploadMask(imageId, mask);
+    const newImageId = await client.maskedInPainting(imageId, prompt, mask);
+    if (!newImageId) {
+      console.error("Could not generate image");
 
-    console.log(maskResp);
-
-    const resp = await fetch(`/api/mask-inpaint`, {
-      method: "POST",
-      body: JSON.stringify({
-        prompt: prompt,
-        maskId: maskResp["maskId"],
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await resp.json();
-
-    if (data.success != true || !data.imageId) {
-      console.log(data);
       return;
     }
 
-    const newImageId = data.imageId;
-
     const checkEmbeddings = async () => {
       console.log("Checking if embeddings were generated");
-      const resp = await fetch(`/api/image/${newImageId}/embedding`);
-      const data = await resp.json();
-      console.log(data);
-      if (data.success === true) {
+      const hasEmbeddings = await client.hasEmbeddings(newImageId);
+
+      if (hasEmbeddings === true) {
         console.log(
           "Embeddings generated, redirecting to editor with new image id"
         );
@@ -122,13 +104,9 @@ export const Editor = ({ imageId }: Props) => {
 
     const checkImageGenerated = async () => {
       console.log("Checking if image was generated");
-      const resp = await fetch(`/api/image/${newImageId}/hasImage`, {
-        method: "POST",
-      });
-      const data = await resp.json();
-      console.log(data);
+      const hasImage = await client.hasImage(newImageId);
 
-      if (data.hasImage == true) {
+      if (hasImage == true) {
         console.log("Image generated");
         checkEmbeddings();
         return;
@@ -138,8 +116,6 @@ export const Editor = ({ imageId }: Props) => {
     };
 
     checkImageGenerated();
-
-    console.log(data);
   };
 
   return (

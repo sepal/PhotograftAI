@@ -25,7 +25,7 @@ export async function POST(req: Request, { params }: Params) {
 
   const imageName = image.file?.name;
   if (!imageName) {
-    return NextResponse.json({ hasImage: false });
+    return NextResponse.json({ has: false });
   }
-  return NextResponse.json({ hasImage: true });
+  return NextResponse.json({ has: true });
 }
