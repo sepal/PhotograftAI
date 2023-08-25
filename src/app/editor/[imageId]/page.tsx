@@ -1,4 +1,4 @@
-import { Canvas } from "@/components/editor";
+import { Editor } from "@/components/editor";
 
 export default async function Page({
   params,
@@ -9,7 +9,7 @@ export default async function Page({
 
   return (
     <div className="p-4 mx-auto">
-      <Canvas imageId={imageId} />
+      <Editor imageId={imageId} />
     </div>
   );
 }
