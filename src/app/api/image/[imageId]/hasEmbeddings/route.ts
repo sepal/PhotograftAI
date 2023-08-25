@@ -3,11 +3,11 @@ import { getXataClient } from "@/lib/xata";
 import { NextResponse } from "next/server";
 
 type Params = {
-  params: { id: string };
+  params: { imageId: string };
 };
 
 export async function POST(req: Request, { params }: Params) {
-  const { id } = params;
+  const { imageId: id } = params;
   console.log("Checking embeddings for", id);
 
   const xata = getXataClient();

@@ -3,7 +3,7 @@ import { getXataClient } from "@/lib/xata";
 import { NextResponse } from "next/server";
 
 type Params = {
-  params: { id: string };
+  params: { imageId: string };
 };
 
 /**
@@ -11,7 +11,7 @@ type Params = {
  * Mainly used for generated images.
  */
 export async function POST(req: Request, { params }: Params) {
-  const { id } = params;
+  const { imageId: id } = params;
 
   if (!id) {
     return createErrorMessage("Bad request, id missing", 400);

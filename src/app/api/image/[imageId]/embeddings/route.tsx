@@ -5,14 +5,14 @@ import { createErrorMessage } from "@/lib/api/errors";
 import * as path from "path";
 
 type Params = {
-  params: { id: string };
+  params: { imageId: string };
 };
 
 /**
  * Webhook for replicate to push the embeddings.
  */
 export async function POST(req: Request, { params }: Params) {
-  const { id } = params;
+  const { imageId: id } = params;
   console.log("Receiving embeddings for", id);
 
   const resp = await req.json();
@@ -50,7 +50,7 @@ export async function POST(req: Request, { params }: Params) {
  * Endpoint to receive an image's embeddings.
  */
 export async function GET(req: Request, { params }: Params) {
-  const { id } = params;
+  const { imageId: id } = params;
   console.log("Retreiving embeddings for", id);
 
   const xata = getXataClient();

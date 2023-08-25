@@ -2,11 +2,11 @@ import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
 
 type Params = {
-  params: { id: string };
+  params: { imageId: string };
 };
 
 export async function POST(req: Request, { params }: Params) {
-  const { id } = params;
+  const { imageId: id } = params;
 
   const data = await req.formData();
 
