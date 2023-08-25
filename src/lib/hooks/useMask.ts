@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Points, getMask, initSAM, loadNpyTensor, prepModelData } from "../sam";
 
 export default function useMask(
-  embeddingsPath: string,
+  imageId: string,
   imageWidth: number,
   imageHeight: number,
   scale: number
@@ -12,6 +12,8 @@ export default function useMask(
   const [embeddings, setEmbeddings] = useState<Tensor | null>(null);
   const [points, setPoints] = useState<Points>([]);
   const [mask, setMask] = useState<Tensor | null>(null);
+
+  const embeddingsPath = `/api/image/${imageId}/embeddings`;
 
   // Initialize the SAM model.
   useEffect(() => {

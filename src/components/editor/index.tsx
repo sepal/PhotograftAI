@@ -22,12 +22,7 @@ export const Editor = ({ imageId }: Props) => {
   const client = getPhotograftClient();
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [mask, setPoints] = useMask(
-    `/api/image/${imageId}/embeddings`,
-    512,
-    512,
-    1024 / 512
-  );
+  const [mask, setPoints] = useMask(imageId, 512, 512, 1024 / 512);
 
   const [generateState, setGenerateState] = useState<ProcessingState>(
     ProcessingState.Idle
