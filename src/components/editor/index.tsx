@@ -7,12 +7,13 @@ import useMask from "@/lib/hooks/useMask";
 import { uploadMask } from "@/lib/masks";
 import { maskToImage } from "@/lib/imageData";
 import { Point } from "@/lib/sam";
+import Canvas from "./Canvas";
 
 interface Props {
   imageId: string;
 }
 
-export const Canvas = ({ imageId }: Props) => {
+export const Editor = ({ imageId }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
 
@@ -159,13 +160,7 @@ export const Canvas = ({ imageId }: Props) => {
   return (
     <div className="flex flex-col justify-between items-stretch max-w-lg m-auto">
       <div className="grow w-full">
-        <canvas
-          ref={canvasRef}
-          onClick={handleClick}
-          width="512px"
-          height="512px"
-          className="m-auto w-full"
-        />
+        <Canvas canvasRef={canvasRef} onClick={handleClick} />
       </div>
       <form className="flex flex-col my-4" onSubmit={handleGenerateImage}>
         <textarea
