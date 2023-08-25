@@ -1,37 +1,19 @@
 import sharp from "sharp";
-import { getReplicateClient } from "./replicate";
-import { getAppDomain } from "./url";
-import { ImagesRecord, getXataClient } from "./xata";
-
-export enum OperationType {
-  MaskInpaint = "mask-inpaint",
-}
-
-export async function createOperation(
-  prompt: string,
-  imageId: string,
-  maskIds: string[],
-  operationType: OperationType
-) {
-  const xata = getXataClient();
-
-  await xata.db.Operations.create({
-    original: imageId,
-    masks: JSON.stringify(maskIds),
-    prompt,
-    type: operationType.toString(),
-  });
-}
+import { getReplicateClient } from "../replicate";
+import { getXataClient } from "../xata";
+import { getAppDomain } from "../url";
 
 export async function requestEmbeddings(imageId: string) {
   const xata = getXataClient();
   const replicate = getReplicateClient();
 
+  // TODO: wait for xataio update and remove ignore.
+  // @ts-ignore
   const fileRecord = await xata.db.Images.read(imageId, [
     "file.mediaType",
     "file.signedUrl",
   ]);
-  const webHookUrl = `${getAppDomain()}/api/image/${imageId}/embedding`;
+  const webHookUrl = `${getAppDomain()}/api/image/${imageId}/embeddings`;
   const imageUrl = fileRecord!.file!.signedUrl;
 
   console.log("Creating embeddings");
@@ -53,7 +35,6 @@ export async function createImage(
 ) {
   console.log("Creating image");
   const xata = getXataClient();
-  const replicate = getReplicateClient();
 
   // Stable diffusion can handle images up to a certain size, so we resize the image here.
   const resizedImage = await sharp(imageData).resize(512, 512).toBuffer();
@@ -71,4 +52,11 @@ export async function createImage(
   await requestEmbeddings(record.id);
 
   return record.id;
+}
+export async function createEmptyImage() {
+  const xata = getXataClient();
+
+  const image = await xata.db.Images.create({});
+
+  return image;
 }
