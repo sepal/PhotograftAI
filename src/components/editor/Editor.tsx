@@ -55,7 +55,7 @@ export const Editor = ({ imageId, image }: Props) => {
 
     if (!canvasCtxRef.current) return;
     drawPreview(canvasCtxRef.current);
-  }, [image, points, mask]);
+  }, [image, mask]);
 
   const handlePoint = async (newPoint: Point) => {
     const filteredPoints = is_within_radius(newPoint, points, 10);

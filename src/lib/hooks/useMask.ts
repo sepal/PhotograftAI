@@ -32,7 +32,12 @@ export default function useMask(
 
   // Run the predictions.
   useEffect(() => {
-    if (!model || !embeddings || points.length == 0) {
+    if (!model || !embeddings) {
+      return;
+    }
+
+    if (points.length == 0) {
+      setMask(null);
       return;
     }
 
