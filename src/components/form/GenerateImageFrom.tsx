@@ -18,7 +18,11 @@ const GenerateImageForm = ({ onSubmit, state }: GenerateImageFormProps) => {
 
   return (
     <form className="flex flex-col my-4" onSubmit={handleSubmit}>
-      <TextArea placeholder="A golden hour sky..." ref={promptRef} />
+      <TextArea
+        placeholder="A golden hour sky..."
+        ref={promptRef}
+        disabled={state == ProcessingState.Processing}
+      />
       <ProcessButton state={state}>Generate</ProcessButton>
     </form>
   );

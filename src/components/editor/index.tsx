@@ -6,6 +6,7 @@ import { Editor } from "./Editor";
 import { getPhotograftClient } from "@/lib/photograftApi";
 import Image from "next/image";
 import Spinner from "../icons/Spinner";
+import ProcessingOverlay from "./ProcessingOverlay";
 
 interface Props {
   imageId: string;
@@ -48,11 +49,7 @@ export default function ({ imageId }: Props) {
   let child = (
     <div>
       <Image src={imageUrl} alt="Loading image" width={512} height={512} />
-      <div className="absolute flex justify-center items-center w-full h-full top-0  text-white bg-black/60">
-        <div className="text-center">
-          <Spinner size="2rem" color="bg-slate-300" /> Processing image...
-        </div>
-      </div>
+      <ProcessingOverlay text="Processing image..." />
     </div>
   );
   if (image && hasEmbeddings) {

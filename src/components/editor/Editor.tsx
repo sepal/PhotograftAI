@@ -10,6 +10,8 @@ import EditorCanvas from "./EditorCanvas";
 import GenerateImageForm from "../form/GenerateImageFrom";
 import { getPhotograftClient } from "@/lib/photograftApi";
 import { loadImage } from "@/lib/graphics/images";
+import Spinner from "../icons/Spinner";
+import ProcessingOverlay from "./ProcessingOverlay";
 
 interface Props {
   imageId: string;
@@ -80,8 +82,12 @@ export const Editor = ({ imageId, image }: Props) => {
 
   return (
     <>
-      <div className="grow w-full">
+      <div className="grow w-full relative">
         <EditorCanvas ref={canvasRef} onPointClick={handlePoint} />
+
+        {generateState == ProcessingState.Processing && (
+          <ProcessingOverlay text="Generating image..." />
+        )}
       </div>
       <GenerateImageForm onSubmit={handleGenerateImage} state={generateState} />
     </>
