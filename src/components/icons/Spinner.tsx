@@ -1,8 +1,15 @@
-const Spinner = () => (
+interface Props {
+  size?: string;
+  color?: string;
+}
+
+const Spinner = ({ size = "1.25rem" }: Props) => (
   <svg
-    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
+    className={`animate-spin -ml-1 mr-3 text-white inline`}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
   >
     <circle
@@ -11,7 +18,7 @@ const Spinner = () => (
       cy="12"
       r="10"
       stroke="currentColor"
-      stroke-width="4"
+      strokeWidth="4"
     ></circle>
     <path
       className="opacity-75"

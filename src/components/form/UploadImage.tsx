@@ -37,22 +37,8 @@ export const UploadImage = () => {
 
     const id = data.images[0];
 
-    console.log(data);
+    router.push(`/editor/${id}`);
     setState(ProcessingState.Done);
-
-    const checkEmbeddings = async () => {
-      const photograft = getPhotograftClient();
-      const hasImage = await photograft.hasEmbeddings(id);
-      if (hasImage === true) {
-        setState(ProcessingState.Done);
-        router.push(`/editor/${id}`);
-        return;
-      } else {
-        setTimeout(checkEmbeddings, 1000);
-      }
-    };
-
-    await checkEmbeddings();
   };
 
   return (
