@@ -57,7 +57,7 @@ export const Editor = ({ imageId, image }: Props) => {
   }, [image, mask]);
 
   const handlePoint = async (point: Point) => {
-    setPoints([point]);
+    setPoints([...points, point]);
   };
 
   const handleGenerateImage = async (prompt: string) => {
