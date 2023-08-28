@@ -13,6 +13,7 @@ import { loadImage } from "@/lib/graphics/images";
 import Spinner from "../icons/Spinner";
 import ProcessingOverlay from "./ProcessingOverlay";
 import { drawPoint } from "@/lib/graphics/objects";
+import { is_within_radius } from "@/lib/graphics/calculations";
 
 interface Props {
   imageId: string;
@@ -37,7 +38,7 @@ export const Editor = ({ imageId, image }: Props) => {
     if (!image) return;
     canvasCtxRef.current!.drawImage(image, 0, 0, 512, 512);
 
-    if (!mask) {
+    if (!mask || points.length == 0) {
       return;
     }
     const maskImage = await maskToImage(mask, [0, 114, 189, 120]);
@@ -54,10 +55,16 @@ export const Editor = ({ imageId, image }: Props) => {
 
     if (!canvasCtxRef.current) return;
     drawPreview(canvasCtxRef.current);
-  }, [image, mask]);
+  }, [image, points, mask]);
 
-  const handlePoint = async (point: Point) => {
-    setPoints([...points, point]);
+  const handlePoint = async (newPoint: Point) => {
+    const filteredPoints = is_within_radius(newPoint, points, 10);
+
+    if (filteredPoints.length != points.length) {
+      setPoints(filteredPoints);
+    } else {
+      setPoints([...points, newPoint]);
+    }
   };
 
   const handleGenerateImage = async (prompt: string) => {
