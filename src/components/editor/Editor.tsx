@@ -12,6 +12,7 @@ import { getPhotograftClient } from "@/lib/photograftApi";
 import { loadImage } from "@/lib/graphics/images";
 import Spinner from "../icons/Spinner";
 import ProcessingOverlay from "./ProcessingOverlay";
+import { drawPoint } from "@/lib/graphics/objects";
 
 interface Props {
   imageId: string;
@@ -24,7 +25,7 @@ export const Editor = ({ imageId, image }: Props) => {
 
   const client = getPhotograftClient();
 
-  const [mask, setPoints] = useMask(imageId, 512, 512, 1024 / 512);
+  const [mask, points, setPoints] = useMask(imageId, 512, 512, 1024 / 512);
 
   const [generateState, setGenerateState] = useState<ProcessingState>(
     ProcessingState.Idle
@@ -41,6 +42,10 @@ export const Editor = ({ imageId, image }: Props) => {
     }
     const maskImage = await maskToImage(mask, [0, 114, 189, 120]);
     canvasCtxRef.current!.drawImage(maskImage, 0, 0, 512, 512);
+
+    points.forEach((point) => {
+      drawPoint(canvasCtxRef.current!, point);
+    });
   };
 
   useEffect(() => {

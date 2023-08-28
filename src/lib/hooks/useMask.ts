@@ -43,5 +43,5 @@ export default function useMask(
       .catch(console.error);
   }, [points]);
 
-  return [mask, setPoints] as const;
+  return [mask, points, setPoints] as const;
 }
