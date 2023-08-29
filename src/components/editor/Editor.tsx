@@ -12,6 +12,8 @@ import { getPhotograftClient } from "@/lib/photograftApi";
 import { loadImage } from "@/lib/graphics/images";
 import Spinner from "../icons/Spinner";
 import ProcessingOverlay from "./ProcessingOverlay";
+import { drawPoint } from "@/lib/graphics/objects";
+import { is_within_radius } from "@/lib/graphics/calculations";
 
 interface Props {
   imageId: string;
@@ -24,7 +26,7 @@ export const Editor = ({ imageId, image }: Props) => {
 
   const client = getPhotograftClient();
 
-  const [mask, setPoints] = useMask(imageId, 512, 512, 1024 / 512);
+  const [mask, points, setPoints] = useMask(imageId, 512, 512, 1024 / 512);
 
   const [generateState, setGenerateState] = useState<ProcessingState>(
     ProcessingState.Idle
@@ -36,11 +38,15 @@ export const Editor = ({ imageId, image }: Props) => {
     if (!image) return;
     canvasCtxRef.current!.drawImage(image, 0, 0, 512, 512);
 
-    if (!mask) {
+    if (!mask || points.length == 0) {
       return;
     }
     const maskImage = await maskToImage(mask, [0, 114, 189, 120]);
     canvasCtxRef.current!.drawImage(maskImage, 0, 0, 512, 512);
+
+    points.forEach((point) => {
+      drawPoint(canvasCtxRef.current!, point);
+    });
   };
 
   useEffect(() => {
@@ -51,11 +57,17 @@ export const Editor = ({ imageId, image }: Props) => {
     drawPreview(canvasCtxRef.current);
   }, [image, mask]);
 
-  const handlePoint = async (point: Point) => {
-    setPoints([point]);
+  const handlePoint = async (newPoint: Point) => {
+    const filteredPoints = is_within_radius(newPoint, points, 10);
+
+    if (filteredPoints.length != points.length) {
+      setPoints(filteredPoints);
+    } else {
+      setPoints([...points, newPoint]);
+    }
   };
 
-  const handleGenerateImage = async (prompt: string) => {
+  const handleGenerateImage = async (prompt: string = "") => {
     if (!mask) return;
     setGenerateState(ProcessingState.Processing);
     const newImageId = await client.maskedInPainting(imageId, prompt, mask);
