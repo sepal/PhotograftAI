@@ -33,9 +33,6 @@ export default function ({ imageId }: Props) {
       const check = await client.hasEmbeddings(imageId);
 
       if (check === true) {
-        console.log(
-          "Embeddings generated, redirecting to editor with new image id"
-        );
         setHasEmbeddings(true);
         return;
       } else {
@@ -48,7 +45,13 @@ export default function ({ imageId }: Props) {
 
   let child = (
     <div>
-      <Image src={imageUrl} alt="Loading image" width={512} height={512} />
+      <Image
+        src={imageUrl}
+        alt="Loading image"
+        width={512}
+        height={512}
+        priority
+      />
       <ProcessingOverlay text="Processing image..." />
     </div>
   );

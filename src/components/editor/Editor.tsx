@@ -67,7 +67,7 @@ export const Editor = ({ imageId, image }: Props) => {
     }
   };
 
-  const handleGenerateImage = async (prompt: string) => {
+  const handleGenerateImage = async (prompt: string = "") => {
     if (!mask) return;
     setGenerateState(ProcessingState.Processing);
     const newImageId = await client.maskedInPainting(imageId, prompt, mask);

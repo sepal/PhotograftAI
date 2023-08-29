@@ -13,7 +13,7 @@ export async function POST(req: Request, { params }: Params) {
   const xata = getXataClient();
   const record = await xata.db.Images.read(id, ["embeddings"]);
   if (!record) {
-    return createErrorMessage("Image not found", 400);
+    return createErrorMessage("Image not found", 404);
   }
 
   if (!record.embeddings) {

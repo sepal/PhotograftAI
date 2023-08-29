@@ -12,8 +12,7 @@ const GenerateImageForm = ({ onSubmit, state }: GenerateImageFormProps) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!promptRef.current?.value) return;
-    onSubmit(promptRef.current?.value);
+    onSubmit(promptRef.current?.value || "");
   };
 
   return (
