@@ -53,6 +53,7 @@ export async function createImage(
 
   return record.id;
 }
+
 export async function createEmptyImage() {
   const xata = getXataClient();
 
