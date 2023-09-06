@@ -1,11 +1,6 @@
 import { getReplicateClient } from "../replicate";
 import { getXataClient } from "../xata";
-
-const positive = (prompt: string) =>
-  `"cinematic photo ${prompt} . 35mm photograph, film, bokeh, professional, 4k, highly detailed"`;
-
-const negative =
-  "drawing, painting, crayon, sketch, graphite, impressionist, noisy, blurry, soft, deformed, ugly";
+import { stylePrompt } from "./styles";
 
 const defaultSettings = {
   num_inference_steps: 30,
@@ -13,7 +8,12 @@ const defaultSettings = {
   prompt_strength: 0.9,
 };
 
-export async function inpaint(prompt: string, maskId: string, webhook: string) {
+export async function inpaint(
+  prompt: string,
+  maskId: string,
+  webhook: string,
+  style: string = "base"
+) {
   const xata = getXataClient();
   const replicate = getReplicateClient();
 
@@ -31,11 +31,17 @@ export async function inpaint(prompt: string, maskId: string, webhook: string) {
     throw new Error("Could not get mask signed URL");
   }
 
+  const sPrompt = stylePrompt(prompt, style);
+
+  if (!sPrompt) {
+    throw new Error(`Invalid style ${style} was selected.`);
+  }
+
   const prediction = await replicate.predictions.create({
     version: "aca001c8b137114d5e594c68f7084ae6d82f364758aab8d997b233e8ef3c4d93",
     input: {
-      prompt: positive(prompt),
-      negative_prompt: negative,
+      prompt: sPrompt.prompt,
+      negative_prompt: sPrompt.negative_prompt,
       image: mask.image?.file?.signedUrl,
       mask: mask.file.signedUrl,
       ...defaultSettings,
