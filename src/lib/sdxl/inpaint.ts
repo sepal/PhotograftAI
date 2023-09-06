@@ -1,5 +1,5 @@
-import { getReplicateClient } from "./replicate";
-import { getXataClient } from "./xata";
+import { getReplicateClient } from "../replicate";
+import { getXataClient } from "../xata";
 
 const positive = (prompt: string) =>
   `"cinematic photo ${prompt} . 35mm photograph, film, bokeh, professional, 4k, highly detailed"`;
@@ -11,6 +11,7 @@ export async function inpaint(prompt: string, maskId: string, webhook: string) {
   const xata = getXataClient();
   const replicate = getReplicateClient();
 
+  // @ts-ignore.
   const mask = await xata.db.Masks.readOrThrow(maskId, [
     "file.signedUrl",
     "image.file.signedUrl",
