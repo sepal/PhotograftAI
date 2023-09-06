@@ -528,7 +528,7 @@ export function stylePrompt(prompt: string, styleName: string) {
   }
 
   const styledPrompt = {
-    ...template,
+    ...template[0],
     prompt: template[0].prompt.replace("{prompt}", prompt),
   };
 
