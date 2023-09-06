@@ -3,6 +3,11 @@ import { getReplicateClient } from "../replicate";
 import { getXataClient } from "../xata";
 import { getAppDomain } from "../url";
 
+const defaultImageOptions = {
+  // We increase the timeout, since replicate might have to load the model.
+  signedUrlTimeout: 60 * 10,
+};
+
 export async function requestEmbeddings(imageId: string) {
   const xata = getXataClient();
   const replicate = getReplicateClient();
@@ -42,10 +47,9 @@ export async function createImage(
   const record = await xata.db.Images.create({
     file: {
       name: filename,
-      // We increase the timeout, since replicate might have to load the model.
-      signedUrlTimeout: 60 * 10,
       mediaType: mimeType,
       base64Content: resizedImage.toString("base64"),
+      ...defaultImageOptions,
     },
   });
 
@@ -60,4 +64,21 @@ export async function createEmptyImage() {
   const image = await xata.db.Images.create({});
 
   return image;
+}
+
+export async function addImageData(imageId: string, blob: Blob) {
+  const xata = getXataClient();
+
+  const file = await blob
+    .arrayBuffer()
+    .then((buffer) => Buffer.from(buffer).toString("base64"));
+
+  await xata.db.Images.update(imageId, {
+    file: {
+      name: "image.png",
+      base64Content: file,
+      mediaType: blob.type,
+      ...defaultImageOptions,
+    },
+  });
 }
