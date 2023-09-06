@@ -1,5 +1,5 @@
 import { createErrorMessage } from "@/lib/api/errors";
-import { requestEmbeddings } from "@/lib/api/images";
+import { addImageData, requestEmbeddings } from "@/lib/api/images";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
@@ -72,17 +72,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const blob = await fileResp.blob();
 
-  const file = await blob
-    .arrayBuffer()
-    .then((buffer) => Buffer.from(buffer).toString("base64"));
-
-  await xata.db.Images.update(imageId, {
-    file: {
-      name: "image.png",
-      base64Content: file,
-      mediaType: blob.type,
-    },
-  });
+  await addImageData(imageId, blob);
 
   await requestEmbeddings(imageId);
 
