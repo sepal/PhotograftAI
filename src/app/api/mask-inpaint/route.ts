@@ -1,5 +1,5 @@
 import { createEmptyImage } from "@/lib/api/images";
-import { inpaint } from "@/lib/inpaint";
+import { inpaint } from "@/lib/sdxl/inpaint";
 import { getAppDomain } from "@/lib/url";
 import { getXataClient } from "@/lib/xata";
 import { NextRequest, NextResponse } from "next/server";
