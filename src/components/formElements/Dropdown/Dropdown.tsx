@@ -1,8 +1,9 @@
 import { ReactNode, useRef, useState } from "react";
 import Option from "./Option";
+import DropButton from "./DropButton";
 
 interface Props {
-  values: [[string, ReactNode]];
+  values: [string, string][];
 }
 
 const Dropdown = ({ values }: Props) => {
@@ -40,7 +41,12 @@ const Dropdown = ({ values }: Props) => {
       return value.match(filter) != null;
     })
     .map(([value, element], i) => (
-      <Option key={i} value={value} onSelect={handleSelect}>
+      <Option
+        key={i}
+        value={value}
+        onSelect={handleSelect}
+        selected={inputRef.current?.value == value}
+      >
         {element}
       </Option>
     ));
@@ -49,12 +55,13 @@ const Dropdown = ({ values }: Props) => {
     <div className="w-80 relative">
       <input
         type="text"
-        className="border-2 rounded w-full px-2 py-1"
+        className="border-2 rounded w-full pl-2 pr-8 py-1"
         ref={inputRef}
         onFocus={() => setShowList(true)}
         onBlur={() => setShowList(false)}
         onChange={handleSearch}
       />
+      <DropButton onClick={() => setShowList(!showList)} />
       {showList && (
         <ul className="flex flex-col max-h-40 cursor-pointer overflow-y-scroll absolute z-10 bg-white w-full">
           {list}
