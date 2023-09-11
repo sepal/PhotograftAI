@@ -37,12 +37,18 @@ export class PhotograftClient extends BaseClient {
     return resp.maskId;
   }
 
-  async maskedInPainting(imageId: string, prompt: string, mask: Tensor) {
+  async maskedInPainting(
+    imageId: string,
+    prompt: string,
+    mask: Tensor,
+    style: string
+  ) {
     const maskId = await this.uploadMask(imageId, mask);
 
     const resp = await this.post<MaskedInPaintingResp>(`/api/mask-inpaint`, {
-      prompt: prompt,
-      maskId: maskId,
+      prompt,
+      maskId,
+      style,
     });
 
     return resp.imageId;

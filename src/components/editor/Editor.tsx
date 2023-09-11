@@ -67,10 +67,15 @@ export const Editor = ({ imageId, image }: Props) => {
     }
   };
 
-  const handleGenerateImage = async (prompt: string = "") => {
+  const handleGenerateImage = async (prompt: string = "", style = "") => {
     if (!mask) return;
     setGenerateState(ProcessingState.Processing);
-    const newImageId = await client.maskedInPainting(imageId, prompt, mask);
+    const newImageId = await client.maskedInPainting(
+      imageId,
+      prompt,
+      mask,
+      style
+    );
     if (!newImageId) {
       console.error("Could not generate image");
       return;

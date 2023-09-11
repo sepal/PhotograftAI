@@ -4,9 +4,10 @@ import DropButton from "./DropButton";
 
 interface Props {
   values: [string, string][];
+  onSelect: (value: string) => void;
 }
 
-const Dropdown = ({ values }: Props) => {
+const Dropdown = ({ values, onSelect }: Props) => {
   const [showList, setShowList] = useState<boolean>(false);
   const [filter, setFilter] = useState<RegExp | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -16,6 +17,7 @@ const Dropdown = ({ values }: Props) => {
       inputRef.current.value = value;
     }
     setShowList(false);
+    onSelect(value);
   };
 
   const handleSearch = () => {
