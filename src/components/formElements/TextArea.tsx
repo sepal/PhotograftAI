@@ -12,7 +12,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       <textarea
         {...props}
         ref={ref}
-        className={`border my-2 p-1 border-slate-500 rounded ${className}`}
+        className={`border my-2 p-1 border-slate-500 rounded w-full ${className}`}
         placeholder={placeholder}
         disabled={disabled}
       />
